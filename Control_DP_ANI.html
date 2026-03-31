@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Control de Correspondencia — ANI</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f4f0;--surface:#fff;--surface2:#f0efe9;--border:#dddbd3;--border2:#c8c6bc;--text:#1a1917;--text2:#6b6860;--text3:#9e9b92;--accent:#1a3a5c;--accent2:#2e6da4;--green:#1e5c2e;--green-bg:#e8f4ec;--red:#8b1a1a;--red-bg:#faeaea;--amber:#7a4a00;--amber-bg:#fef3dc;--orange:#8b3500;--orange-bg:#fdeede;--mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
+.topbar{background:var(--accent);color:#fff;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:50;border-bottom:2px solid #0f2338}
+.topbar-left{display:flex;align-items:center;gap:16px}
+.topbar-logo{font-family:var(--mono);font-size:11px;letter-spacing:.08em;opacity:.7;border-right:1px solid rgba(255,255,255,.2);padding-right:16px}
+.topbar-title{font-size:14px;font-weight:500}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.topbar-date{font-family:var(--mono);font-size:11px;opacity:.6}
+.main{max-width:1400px;margin:0 auto;padding:2rem}
+/* TABS */
+.tabs{display:flex;gap:0;margin-bottom:1.5rem;border-bottom:2px solid var(--border)}
+.tab{padding:10px 24px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .12s}
+.tab:hover{color:var(--text)}
+.tab.active.t1{color:var(--accent);border-bottom-color:var(--accent)}
+.tab.active.t2{color:#6b2d00;border-bottom-color:#c05000}
+.tab-badge{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;font-size:10px;font-weight:600;margin-left:6px}
+.tab.active.t1 .tab-badge{background:#eef5fb;color:var(--accent)}
+.tab.active.t2 .tab-badge{background:#fdeede;color:#8b3500}
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:1.5rem}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:1.25rem 1.5rem;position:relative;overflow:hidden}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kpi-card.k-blue::before{background:var(--accent2)}.kpi-card.k-green::before{background:#2d8a47}.kpi-card.k-red::before{background:#c0392b}.kpi-card.k-amber::before{background:#e08c00}.kpi-card.k-orange::before{background:#c05000}
+.kpi-label{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text2);margin-bottom:8px}
+.kpi-val{font-family:var(--mono);font-size:36px;font-weight:500;line-height:1}
+.kpi-val.k-blue{color:var(--accent)}.kpi-val.k-green{color:var(--green)}.kpi-val.k-red{color:var(--red)}.kpi-val.k-amber{color:var(--amber)}.kpi-val.k-orange{color:#8b3500}
+.kpi-sub{font-size:11px;color:var(--text3);margin-top:6px;font-family:var(--mono)}
+/* TOOLBAR */
+.toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:10px}
+.toolbar-left{display:flex;align-items:center;gap:8px}
+.section-label{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text2)}
+.filter-input{border:1px solid var(--border);border-radius:4px;padding:6px 12px;font-size:12px;font-family:var(--mono);background:var(--surface);color:var(--text);width:220px}
+.filter-input:focus{outline:none;border-color:var(--accent2)}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:4px;border:1px solid var(--border2);background:var(--surface);color:var(--text);font-size:12px;font-family:var(--sans);font-weight:500;cursor:pointer;transition:background .12s,border-color .12s}
+.btn:hover{background:var(--surface2);border-color:var(--accent2)}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}.btn.primary:hover{background:#0f2338}
+.btn.primary2{background:#8b3500;color:#fff;border-color:#8b3500}.btn.primary2:hover{background:#6b2500}
+.btn.success{background:var(--green);color:#fff;border-color:var(--green)}.btn.success:hover{background:#164524}
+.btn.danger{color:var(--red)}.btn.danger:hover{background:var(--red-bg);border-color:var(--red)}
+.btn.sm{padding:4px 10px;font-size:11px}
+.btn svg{width:14px;height:14px;flex-shrink:0}
+/* TABLE */
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.table-scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{background:var(--surface2);padding:10px 14px;text-align:left;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text2);border-bottom:1px solid var(--border);white-space:nowrap}
+tbody td{padding:11px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--surface2)}
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:3px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-family:var(--mono);white-space:nowrap}
+.badge.vencido{background:var(--red-bg);color:var(--red)}.badge.critico{background:var(--orange-bg);color:var(--orange)}.badge.proximo{background:var(--amber-bg);color:var(--amber)}.badge.tiempo{background:var(--green-bg);color:var(--green)}.badge.respondido{background:#e4f0e8;color:#1a5228}.badge.sin{background:var(--surface2);color:var(--text2)}
+.dias-cell{font-family:var(--mono);font-size:13px;font-weight:500}
+.dias-cell.neg{color:var(--red)}.dias-cell.low{color:var(--orange)}.dias-cell.ok{color:var(--text)}
+.oficio-code{font-family:var(--mono);font-size:11px;color:var(--accent2)}
+.oficio-code.t2{color:#8b3500}
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto}
+.modal-bg.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:2rem;width:100%;max-width:580px;position:relative;animation:slideIn .15s ease}
+@keyframes slideIn{from{transform:translateY(-10px);opacity:0}to{transform:none;opacity:1}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+.modal-header h3{font-size:16px;font-weight:600}
+.modal-close{background:none;border:none;cursor:pointer;font-size:20px;color:var(--text2);line-height:1;padding:2px 6px;border-radius:4px}
+.modal-close:hover{background:var(--surface2)}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text2);margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;padding:8px 12px;border:1px solid var(--border2);border-radius:4px;font-size:13px;font-family:var(--sans);background:var(--surface);color:var(--text)}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--accent2)}
+.field input[readonly]{background:var(--surface2);color:var(--text2)}
+.field textarea{resize:vertical;min-height:70px;line-height:1.5}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--border)}
+/* UPLOAD */
+.upload-zone{border:2px dashed var(--border2);border-radius:6px;padding:2.5rem;text-align:center;cursor:pointer;position:relative;transition:background .12s,border-color .12s;margin-bottom:1.5rem}
+.upload-zone:hover,.upload-zone.drag{background:var(--surface2);border-color:var(--accent2)}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-zone .uz-icon{font-size:28px;margin-bottom:10px}
+.upload-zone strong{display:block;font-size:15px;font-weight:500;margin-bottom:6px}
+.upload-zone p{font-size:12px;color:var(--text2)}
+/* LOADING */
+.loading-box{display:flex;flex-direction:column;align-items:center;gap:16px;padding:3rem 2rem}
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent2);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-box p{font-size:13px;color:var(--text2);text-align:center}
+.loading-box .fname{font-family:var(--mono);font-size:11px;color:var(--text3)}
+.ai-note{background:#eef5fb;border-left:3px solid var(--accent2);border-radius:0 4px 4px 0;padding:10px 14px;font-size:12px;color:#1a3a5c;margin-bottom:1.25rem}
+.ai-note strong{display:block;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px;color:var(--accent2)}
+.ai-note.t2{background:#fdeede;border-left-color:#8b3500;color:#6b2500}
+.ai-note.t2 strong{color:#8b3500}
+/* SETTINGS */
+.settings-panel{display:none;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:1.25rem 1.5rem;margin-bottom:1.5rem}
+.settings-panel.open{display:block}
+.settings-panel h4{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text2);margin-bottom:12px}
+.settings-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.settings-row label{font-size:12px;color:var(--text2)}
+.settings-row input{padding:6px 10px;border:1px solid var(--border2);border-radius:4px;font-family:var(--mono);font-size:12px;background:var(--surface);color:var(--text);width:340px}
+.apikey-bar{background:var(--amber-bg);border:1px solid #f0c040;border-radius:6px;padding:12px 16px;display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;flex-wrap:wrap}
+.apikey-bar p{font-size:12px;color:var(--amber);flex:1;min-width:200px}
+.apikey-bar p a{color:var(--accent2);text-decoration:underline}
+.empty-state{text-align:center;padding:4rem 2rem}
+.empty-state p{color:var(--text2);font-size:13px;margin-top:8px}
+.footer{margin-top:2rem;padding:1rem 0;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.footer p{font-size:11px;color:var(--text3);font-family:var(--mono)}
+/* TYPE PILL */
+.type-pill{display:inline-flex;align-items:center;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:600;font-family:var(--mono)}
+.type-pill.t1{background:#eef5fb;color:var(--accent)}
+.type-pill.t2{background:#fdeede;color:#8b3500}
+@media(max-width:768px){.kpi-row{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}.main{padding:1rem}}
+</style>
+</head>
+<body>
+<!-- EMBEDDED DATA STORAGE -->
+<textarea id="data-store" style="display:none">{"r1": [{"radicadoANI": "20264090283982", "radicadoInterno": "", "fechaRadInterno": "", "fechaRecepcion": "2026-03-06", "asunto": "Traslado DP - Paraderos oficiales Ruta 45, Municipio de Aipe - Huila. Concesión 017/2015", "oficioInterventoria": "NEG005-3449-26", "fechaTraslado": "2026-03-27", "plazo": 1, "fechaLimite": "2026-03-28", "archivoPDF": "NEG005-3449-26_R_4038-4025_D__P__paraderos_aipe_GEC.pdf", "observaciones": "Concesionario respondió parcialmente. Se solicita complementar con paraderos K15+450 y K52+200.", "fechaRespuesta": "", "oficioRespuesta": "", "fechaRespANI": "", "oficioRespANI": ""}, {"radicadoANI": "20264090339892", "radicadoInterno": "", "fechaRadInterno": "", "fechaRecepcion": "2026-03-18", "asunto": "Traslado DP - Reclamo daños vehículo por falla talanquera peaje Flandes. Concesión 017/2015", "oficioInterventoria": "NEG005-3447-26", "fechaTraslado": "2026-03-26", "plazo": 1, "fechaLimite": "2026-03-27", "archivoPDF": "NEG005-3447-26.pdf", "observaciones": "Peticionario: Freddy Segura Parada. Placa KYN087. Consecutivo E1-022535", "fechaRespuesta": "", "oficioRespuesta": "", "fechaRespANI": "", "oficioRespANI": ""}, {"radicadoANI": "20264090306842", "radicadoInterno": "", "fechaRadInterno": "", "fechaRecepcion": "2026-03-11", "asunto": "Traslado DP - Solicitud limpieza y mantenimiento canales de drenaje tramo Flandes - El Espinal", "oficioInterventoria": "NEG005-3456-26", "fechaTraslado": "2026-03-30", "plazo": 1, "fechaLimite": "2026-03-31", "archivoPDF": "NEG005-3456-26_Rem_DP_4046_Solicitud_limpieza_drenajes_Flandes_ANG.pdf", "observaciones": "Resp. Concesionario: S1-027343 del 31/03/2026. Pendiente respuesta a la ANI.", "fechaRespuesta": "2026-03-31", "oficioRespuesta": "S1-027343", "fechaRespANI": "", "oficioRespANI": ""}], "r2": [{"radicadoANI": "20263120100831", "radicadoInterno": "4043", "fechaRadInterno": "2026-03-24", "fechaRecepcion": "2026-03-24", "asunto": "Traslado DP - Reclamo daños vehículo por falla talanquera peaje Flandes. Seguimiento Interventoría. Concesión 017/2015", "oficioANI": "20263120100831", "plazo": 5, "fechaLimite": "2026-03-31", "archivoPDF": "05-4043-26_Daño_vehículo.pdf", "observaciones": "Firma: Cecilia Muñoz Salamanca. Relacionado con NEG005-3447-26. Peticionario: Freddy Segura Parada. Placa KYN087", "fechaRespuestaInterv": "", "oficioRespuestaInterv": "", "fechaRespANI2": "", "oficioRespANI2": ""}, {"radicadoANI": "20263120100881", "radicadoInterno": "4046", "fechaRadInterno": "2026-03-24", "fechaRecepcion": "2026-03-24", "asunto": "Traslado DP - Solicitud limpieza canales de drenaje tramo Flandes - El Espinal. Seguimiento Interventoría. Concesión 017/2015", "oficioANI": "20263120100881", "plazo": 5, "fechaLimite": "2026-03-31", "archivoPDF": "05-4046-26_20263120100881_Solicitud_limpieza_drenajes_Flandes.pdf", "observaciones": "Firma: Cecilia Muñoz Salamanca. Relacionado con NEG005-3456-26. Resp. Concesionario: S1-027343 del 31/03/2026. Pendiente concepto Interventoría a la ANI.", "fechaRespuestaInterv": "2026-03-31", "oficioRespuestaInterv": "S1-027343", "fechaRespANI2": "", "oficioRespANI2": ""}]}</textarea>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="topbar-logo">CONSORCIO INTERDISEÑOS ANI-005</span>
+    <span class="topbar-title">Control de Correspondencia — ANI</span>
+  </div>
+  <div class="topbar-right">
+    <span class="topbar-date" id="topbar-date"></span>
+    <button class="btn sm" style="color:#fff;border-color:rgba(255,255,255,.3);background:transparent" onclick="toggleSettings()">⚙ API Key</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="settings-panel" id="settings-panel">
+    <h4>Configuración</h4>
+    <div class="settings-row">
+      <label>API Key de Anthropic</label>
+      <input type="password" id="apikey-input" placeholder="sk-ant-..." oninput="saveApiKey()">
+      <button class="btn sm success" onclick="toggleSettings()">Guardar y cerrar</button>
+    </div>
+    <p style="font-size:11px;color:var(--text3);margin-top:10px">Obtenga su API key en <a href="https://console.anthropic.com" target="_blank" style="color:var(--accent2)">console.anthropic.com</a> → API Keys → Create Key.</p>
+  </div>
+  <div class="apikey-bar" id="apikey-bar" style="display:none">
+    <p><strong>⚠ API Key no configurada.</strong> Sin ella la IA no puede leer los PDFs automáticamente. <a href="https://console.anthropic.com" target="_blank">Obtener key →</a></p>
+    <button class="btn sm primary" onclick="toggleSettings()">Configurar ahora</button>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab t1 active" onclick="switchTab(1)" id="tab1">
+      📤 Enviada al Concesionario
+      <span class="tab-badge" id="badge1">0</span>
+    </button>
+    <button class="tab t2" onclick="switchTab(2)" id="tab2">
+      📥 Recibida de la ANI
+      <span class="tab-badge" id="badge2">0</span>
+    </button>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-row" id="kpi-row"></div>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <span class="section-label" id="section-label">Registro</span>
+      <input class="filter-input" type="text" placeholder="Buscar radicado, asunto, oficio..." id="search-input" oninput="render()">
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn success" onclick="downloadWithData()" title="Guarda el archivo HTML con todos los datos incluidos">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 10V3M5 7l3 3 3-3"/><path d="M3 13h10"/></svg>
+        Guardar archivo
+      </button>
+      <button class="btn" onclick="exportExcel()">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="1"/><path d="M5 8l2 2 4-4"/></svg>
+        Exportar Excel
+      </button>
+      <button class="btn" onclick="triggerImport()" style="color:var(--green);border-color:var(--green)">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 6v6M5 9l3 3 3-3"/><path d="M3 4h10"/></svg>
+        Importar Excel
+      </button>
+      <input type="file" id="import-input" accept=".xlsx,.xls" style="display:none" onchange="importExcel(this)">
+      <button class="btn danger" onclick="limpiarTodo()">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h10M6 4V3h4v1M5 4v8a1 1 0 001 1h4a1 1 0 001-1V4"/></svg>
+        Limpiar todo
+      </button>
+      <button class="btn primary" id="btn-cargar" onclick="openUpload()">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 10V4M5 7l3-3 3 3"/><path d="M3 12h10"/></svg>
+        Cargar PDF
+      </button>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-wrap">
+    <div class="table-scroll">
+      <table id="main-table">
+        <thead id="thead-row"></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="footer">
+    <p>Días restantes y estado se recalculan al abrir. Hoy: <span id="footer-date"></span></p>
+    <p>Datos guardados localmente en este navegador · v2.0</p>
+  </div>
+</div>
+
+<!-- MODAL UPLOAD -->
+<div class="modal-bg" id="modal-upload"><div class="modal" id="modal-upload-inner"></div></div>
+
+<!-- MODAL RESPUESTA T1 -->
+<div class="modal-bg" id="modal-respuesta">
+  <div class="modal">
+    <div class="modal-header"><h3>Registrar respuesta del concesionario</h3><button class="modal-close" onclick="closeModal('modal-respuesta')">×</button></div>
+    <div class="grid2">
+      <div class="field"><label>Fecha de respuesta</label><input type="date" id="r-fecha"></div>
+      <div class="field"><label>N° oficio respuesta</label><input type="text" id="r-oficio" placeholder="Ej. S1-045678"></div>
+    </div>
+    <div class="field"><label>Observaciones adicionales</label><textarea id="r-obs"></textarea></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-respuesta')">Cancelar</button>
+      <button class="btn success" onclick="guardarRespuesta()">Guardar respuesta</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RESP ANI (desde pestaña 1, después de que concesionario respondió) -->
+<div class="modal-bg" id="modal-resp-ani">
+  <div class="modal">
+    <div class="modal-header"><h3>Registrar respuesta enviada a la ANI</h3><button class="modal-close" onclick="closeModal('modal-resp-ani')">×</button></div>
+    <div class="ai-note"><strong>Paso final del flujo</strong>El concesionario ya respondió. Registre aquí el oficio con que ustedes le dieron concepto a la ANI.</div>
+    <div class="grid2">
+      <div class="field"><label>Fecha en que respondieron a la ANI</label><input type="date" id="ra-fecha"></div>
+      <div class="field"><label>N° oficio enviado a la ANI</label><input type="text" id="ra-oficio" placeholder="Ej. NEG005-3500-26"></div>
+    </div>
+    <div class="field"><label>Observaciones</label><textarea id="ra-obs" placeholder="Concepto emitido, notas..."></textarea></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-resp-ani')">Cancelar</button>
+      <button class="btn primary" onclick="guardarRespANI()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RESP ANI TYPE 2 -->
+<div class="modal-bg" id="modal-resp-ani2">
+  <div class="modal">
+    <div class="modal-header"><h3>Registrar nuestra respuesta a la ANI</h3><button class="modal-close" onclick="closeModal('modal-resp-ani2')">×</button></div>
+    <div class="ai-note t2"><strong>Paso final del flujo</strong>El concesionario ya respondió. Registre el oficio con que ustedes le dieron concepto a la ANI.</div>
+    <div class="grid2">
+      <div class="field"><label>Fecha respuesta enviada a la ANI</label><input type="date" id="ra2-fecha"></div>
+      <div class="field"><label>N° oficio enviado a la ANI</label><input type="text" id="ra2-oficio" placeholder="Ej. NEG005-3500-26"></div>
+    </div>
+    <div class="field"><label>Observaciones</label><textarea id="ra2-obs" placeholder="Concepto emitido..."></textarea></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-resp-ani2')">Cancelar</button>
+      <button class="btn primary2" onclick="guardarRespANI2_t2()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RESPUESTA T2 (nuestra respuesta a la ANI) -->
+<div class="modal-bg" id="modal-respuesta2">
+  <div class="modal">
+    <div class="modal-header"><h3>Registrar respuesta enviada a la ANI</h3><button class="modal-close" onclick="closeModal('modal-respuesta2')">×</button></div>
+    <div class="grid2">
+      <div class="field"><label>Fecha respuesta enviada</label><input type="date" id="r2-fecha"></div>
+      <div class="field"><label>N° oficio enviado a ANI</label><input type="text" id="r2-oficio" placeholder="Ej. NEG005-3500-26"></div>
+    </div>
+    <div class="field"><label>Observaciones</label><textarea id="r2-obs"></textarea></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-respuesta2')">Cancelar</button>
+      <button class="btn success" onclick="guardarRespuesta2()">Guardar respuesta</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+// ── FESTIVOS ──────────────────────────────────────────────────────────────────
+const HOLIDAYS = new Set(['2025-01-01','2025-01-06','2025-03-24','2025-04-17','2025-04-18','2025-05-01','2025-06-02','2025-06-23','2025-06-30','2025-07-07','2025-07-20','2025-08-07','2025-08-18','2025-10-13','2025-11-03','2025-11-17','2025-12-08','2025-12-25','2026-01-01','2026-01-12','2026-03-23','2026-04-02','2026-04-03','2026-05-01','2026-05-18','2026-06-08','2026-06-15','2026-06-29','2026-07-20','2026-08-07','2026-08-17','2026-10-12','2026-11-02','2026-11-16','2026-12-08','2026-12-25','2027-01-01','2027-01-11','2027-03-22','2027-04-01','2027-04-02','2027-05-01','2027-05-17','2027-06-07','2027-06-14','2027-06-28','2027-07-20','2027-08-07','2027-08-16','2027-10-18','2027-11-01','2027-11-15','2027-12-08','2027-12-25']);
+function isWorkday(d){const w=d.getDay();if(w===0||w===6)return false;return!HOLIDAYS.has(d.toISOString().slice(0,10))}
+function addWorkdays(s,n){const d=new Date(s+'T12:00:00');let c=0;while(c<n){d.setDate(d.getDate()+1);if(isWorkday(d))c++;}return d.toISOString().slice(0,10)}
+function workdaysBetween(f,t){const from=new Date(f+'T12:00:00'),to=new Date(t+'T12:00:00');let d=new Date(from),c=0,s=to>=from?1:-1;while(d.toDateString()!==to.toDateString()){d.setDate(d.getDate()+s);if(isWorkday(d))c+=s;}return c}
+function todayStr(){return new Date().toISOString().slice(0,10)}
+function fmtDate(s){if(!s)return'—';const[y,m,d]=s.split('-');return`${d}/${m}/${y}`}
+function calcLimite(ft,pl){if(!ft||!pl)return'';return addWorkdays(ft,parseInt(pl))}
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let records1 = JSON.parse(localStorage.getItem('ani_dp_t1')||'[]'); // Enviada al concesionario
+let records2 = JSON.parse(localStorage.getItem('ani_dp_t2')||'[]'); // Recibida de ANI
+let currentTab = 1;
+let editingRespIdx = null;
+
+function save(){
+  try{ localStorage.setItem('ani_dp_t1', JSON.stringify(records1)); localStorage.setItem('ani_dp_t2', JSON.stringify(records2)); }catch(e){}
+  // Also save to embedded store for download
+  document.getElementById('data-store').value = JSON.stringify({r1:records1,r2:records2});
+}
+
+function downloadWithData(){
+  const html = document.documentElement.outerHTML;
+  const data = JSON.stringify({r1:records1,r2:records2});
+  // Inject current data into the download
+  const updated = html.replace(/<textarea id="data-store"[^>]*>[^<]*<\/textarea>/,
+    `<textarea id="data-store" style="display:none">${data.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</textarea>`);
+  const blob = new Blob([updated], {type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'Control_DP_ANI.html';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function currentRecords(){return currentTab===1?records1:records2}
+
+// ── API KEY ───────────────────────────────────────────────────────────────────
+function getApiKey(){return localStorage.getItem('ani_apikey')||''}
+function saveApiKey(){localStorage.setItem('ani_apikey',document.getElementById('apikey-input').value.trim());checkApiKeyBar()}
+function checkApiKeyBar(){document.getElementById('apikey-bar').style.display=getApiKey()?'none':'flex'}
+function toggleSettings(){const p=document.getElementById('settings-panel');p.classList.toggle('open');if(p.classList.contains('open'))document.getElementById('apikey-input').value=getApiKey()}
+
+// ── TABS ──────────────────────────────────────────────────────────────────────
+function switchTab(n){
+  currentTab=n;
+  document.getElementById('tab1').className='tab t1'+(n===1?' active':'');
+  document.getElementById('tab2').className='tab t2'+(n===2?' active':'');
+  const btn=document.getElementById('btn-cargar');
+  btn.className='btn '+(n===1?'primary':'primary2');
+  render();
+}
+
+// ── STATUS ────────────────────────────────────────────────────────────────────
+function getStatus(r, type){
+  if(!r.fechaTraslado && type===1) return{label:'Sin traslado',cls:'sin'};
+  if(!r.fechaRecepcion && type===2) return{label:'Sin fecha',cls:'sin'};
+  if(type===1){
+    // Si ya respondió a la ANI -> cerrado
+    if(r.fechaRespANI) return{label:'Cerrado',cls:'respondido'};
+    // Si concesionario respondió pero falta respuesta a ANI
+    if(r.fechaRespuesta && !r.fechaRespANI){
+      const dias=workdaysBetween(todayStr(),r.fechaLimite);
+      if(dias<0) return{label:'Resp. ANI vencida',cls:'vencido'};
+      if(dias<=2) return{label:'Resp. ANI crítica',cls:'critico'};
+      return{label:'Pendiente ANI',cls:'proximo'};
+    }
+  }
+  const respField = type===1 ? r.fechaRespuesta : r.fechaRespuestaInterv;
+  if(type===2){
+    if(r.fechaRespANI2) return{label:'Cerrado',cls:'respondido'};
+    if(r.fechaRespuestaInterv && !r.fechaRespANI2){
+      const dias=workdaysBetween(todayStr(),r.fechaLimite);
+      if(dias<0) return{label:'Resp. ANI vencida',cls:'vencido'};
+      if(dias<=2) return{label:'Resp. ANI crítica',cls:'critico'};
+      return{label:'Pendiente ANI',cls:'proximo'};
+    }
+  }
+  const lim = r.fechaLimite;
+  if(!lim) return{label:'Sin plazo',cls:'sin'};
+  const dias=workdaysBetween(todayStr(),lim);
+  if(dias<0) return{label:'Vencido',cls:'vencido'};
+  if(dias<=2) return{label:'Crítico',cls:'critico'};
+  if(dias<=7) return{label:'Próximo',cls:'proximo'};
+  return{label:'En tiempo',cls:'tiempo'};
+}
+function getDias(r, type){
+  if(type===1){
+    if(r.fechaRespANI) return null;
+    if(!r.fechaLimite) return null;
+    return workdaysBetween(todayStr(),r.fechaLimite);
+  }
+  if(r.fechaRespANI2||!r.fechaLimite) return null;
+  return workdaysBetween(todayStr(),r.fechaLimite);
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function render(){
+  renderKpis();
+  renderHeaders();
+  renderTable();
+  updateBadges();
+}
+
+function updateBadges(){
+  const v1=records1.filter(r=>getStatus(r,1).cls==='vencido'||getStatus(r,1).cls==='critico').length;
+  const v2=records2.filter(r=>getStatus(r,2).cls==='vencido'||getStatus(r,2).cls==='critico').length;
+  document.getElementById('badge1').textContent=records1.length;
+  document.getElementById('badge2').textContent=records2.length;
+  if(v1>0)document.getElementById('badge1').style.background='#faeaea',document.getElementById('badge1').style.color='#8b1a1a';
+  if(v2>0)document.getElementById('badge2').style.background='#faeaea',document.getElementById('badge2').style.color='#8b1a1a';
+}
+
+function renderKpis(){
+  const recs = currentRecords();
+  const type = currentTab;
+  const respField = type===1?'fechaRespuesta':'fechaRespuestaInterv';
+  const total = recs.filter(r=>type===1?r.fechaTraslado:r.fechaRecepcion).length;
+  const resp  = recs.filter(r=>r[respField]).length;
+  const venc  = recs.filter(r=>getStatus(r,type).cls==='vencido').length;
+  const crit  = recs.filter(r=>getStatus(r,type).cls==='critico').length;
+  const colorAcc = type===1?'k-blue':'k-orange';
+  const colorAccVal = type===1?'k-blue':'k-orange';
+  document.getElementById('kpi-row').innerHTML=`
+    <div class="kpi-card ${colorAcc}"><div class="kpi-label">${type===1?'Total trasladados':'Total recibidos'}</div><div class="kpi-val ${colorAccVal}">${total}</div><div class="kpi-sub">${type===1?'al concesionario':'de la ANI'}</div></div>
+    <div class="kpi-card k-green"><div class="kpi-label">Respondidos</div><div class="kpi-val k-green">${resp}</div><div class="kpi-sub">${type===1?'por el concesionario':'por interventoría'}</div></div>
+    <div class="kpi-card k-red"><div class="kpi-label">Vencidos</div><div class="kpi-val k-red">${venc}</div><div class="kpi-sub">plazo superado</div></div>
+    <div class="kpi-card k-amber"><div class="kpi-label">Críticos ≤2 días</div><div class="kpi-val k-amber">${crit}</div><div class="kpi-sub">requieren gestión</div></div>`;
+}
+
+function renderHeaders(){
+  const t=currentTab;
+  const h1 = t===1
+    ? ['N°','Radicado ANI','Rad. Interno','Recepción ANI','Asunto','Oficio Interventoría','Fecha Traslado','Plazo','Fecha Límite','Días Rest.','Estado','Resp. Concesionario','Resp. a la ANI','Cumplimiento','Acciones']
+    : ['N°','Radicado ANI','Rad. Interno','Fecha Recepción','Asunto','Oficio ANI','Nuestra Fecha Límite','Plazo','Fecha Límite','Días Rest.','Estado','Resp. Concesionario','Resp. a la ANI','Cumplimiento','Acciones'];
+  document.getElementById('thead-row').innerHTML='<tr>'+h1.map(h=>`<th>${h}</th>`).join('')+'</tr>';
+}
+
+function renderTable(){
+  const recs=currentRecords();
+  const type=currentTab;
+  const q=(document.getElementById('search-input')?.value||'').toLowerCase();
+  const filtered=recs.filter(r=>!q||(r.radicadoANI||'').toLowerCase().includes(q)||(r.asunto||'').toLowerCase().includes(q)||(r.oficioInterventoria||'').toLowerCase().includes(q)||(r.oficioANI||'').toLowerCase().includes(q));
+  const tbody=document.getElementById('tbody');
+  if(!filtered.length){tbody.innerHTML=`<tr><td colspan="13"><div class="empty-state"><p style="font-size:14px;font-weight:500">No hay registros</p><p>Cargue un PDF para comenzar.</p></div></td></tr>`;return}
+  tbody.innerHTML=filtered.map((r,i)=>{
+    const realIdx=recs.indexOf(r);
+    const st=getStatus(r,type);
+    const dias=getDias(r,type);
+    const diasHtml=dias===null?'<span style="color:var(--text3)">—</span>':`<span class="dias-cell ${dias<0?'neg':dias<=2?'low':'ok'}">${dias}</span>`;
+    const respField=type===1?'fechaRespuesta':'fechaRespuestaInterv';
+    const oficioRespField=type===1?'oficioRespuesta':'oficioRespuestaInterv';
+    const cumpl=r[respField]?(r[respField]<=r.fechaLimite?'<span style="color:var(--green);font-size:10px;font-weight:600;font-family:var(--mono)">A tiempo</span>':'<span style="color:var(--red);font-size:10px;font-weight:600;font-family:var(--mono)">Tardío</span>'):'<span style="color:var(--text3);font-size:11px">—</span>';
+    const respCell=r[respField]?`<div>${fmtDate(r[respField])}</div><div class="oficio-code ${type===2?'t2':''}">${r[oficioRespField]||''}</div>`:'<span style="color:var(--text3)">—</span>';
+    const oficioCell=type===1?`<span class="oficio-code">${r.oficioInterventoria||'—'}</span>`:`<span class="oficio-code t2">${r.oficioANI||'—'}</span>`;
+    const fechaCell=type===1?fmtDate(r.fechaTraslado):fmtDate(r.fechaRecepcion);
+    // ANI response cell (only for type 1)
+    const aniRespCell = type===1
+      ? (r.fechaRespANI
+          ? `<div>${fmtDate(r.fechaRespANI)}</div><div class="oficio-code">${r.oficioRespANI||''}</div>`
+          : (r.fechaRespuesta
+              ? `<button class="btn sm primary" onclick="abrirRespANI(${realIdx})" style="white-space:nowrap">Registrar resp. ANI</button>`
+              : '<span style="color:var(--text3);font-size:11px">Espera conc.</span>'))
+      : '';
+    const btnResp=!r[respField]?(type===1?`<button class="btn sm success" onclick="abrirRespuesta(${realIdx})">Reg. resp. conc.</button>`:`<button class="btn sm" style="background:#8b3500;color:#fff;border-color:#8b3500" onclick="abrirRespuesta2(${realIdx})">Reg. resp. conc.</button>`):'';
+    // ANI response cell for type 2 (mirrors type 1)
+    const aniRespCell2 = type===2
+      ? (r.fechaRespANI2
+          ? `<div>${fmtDate(r.fechaRespANI2)}</div><div class="oficio-code">${r.oficioRespANI2||''}</div>`
+          : (r.fechaRespuestaInterv
+              ? `<button class="btn sm primary" onclick="abrirRespANI2(${realIdx})" style="white-space:nowrap">Registrar resp. ANI</button>`
+              : '<span style="color:var(--text3);font-size:11px">Espera conc.</span>'))
+      : '';
+    const colsT1 = type===1 ? `<td style="font-size:11px">${aniRespCell}</td>` : `<td style="font-size:11px">${aniRespCell2}</td>`;
+    const cumplFinal = type===1
+      ? (r.fechaRespANI ? (r.fechaRespANI<=r.fechaLimite?'<span style="color:var(--green);font-size:10px;font-weight:600;font-family:var(--mono)">A tiempo</span>':'<span style="color:var(--red);font-size:10px;font-weight:600;font-family:var(--mono)">Tardío</span>') : cumpl)
+      : (r.fechaRespANI2 ? (r.fechaRespANI2<=r.fechaLimite?'<span style="color:var(--green);font-size:10px;font-weight:600;font-family:var(--mono)">A tiempo</span>':'<span style="color:var(--red);font-size:10px;font-weight:600;font-family:var(--mono)">Tardío</span>') : cumpl);
+    return`<tr><td style="color:var(--text3);font-family:var(--mono)">${i+1}</td><td><span class="oficio-code">${r.radicadoANI||'—'}</span></td><td><div style="font-family:var(--mono);font-size:11px;background:var(--surface2);padding:2px 6px;border-radius:3px;white-space:nowrap">${r.radicadoInterno||'—'}</div>${r.fechaRadInterno?`<div style="font-size:10px;color:var(--text3)">${fmtDate(r.fechaRadInterno)}</div>`:''}</td><td style="font-size:11px;white-space:nowrap">${fmtDate(r.fechaRecepcion)}</td><td style="max-width:180px;font-size:11px;line-height:1.4">${(r.asunto||'—').slice(0,90)}${(r.asunto||'').length>90?'…':''}</td><td>${oficioCell}</td><td style="white-space:nowrap;font-size:11px">${fechaCell}</td><td><span style="font-family:var(--mono);font-size:11px;background:var(--surface2);padding:2px 6px;border-radius:3px">${r.plazo||15}d</span></td><td style="white-space:nowrap;font-size:11px">${fmtDate(r.fechaLimite)}</td><td style="text-align:center">${diasHtml}</td><td><span class="badge ${st.cls}">${st.label}</span></td><td style="font-size:11px">${respCell}</td>${colsT1}<td>${cumplFinal}</td><td><div style="display:flex;gap:4px;flex-wrap:wrap">${btnResp}<button class="btn sm" onclick="editarReg(${realIdx})">Editar</button><button class="btn sm danger" onclick="eliminar(${realIdx})">Borrar</button></div></td></tr>`;
+  }).join('');
+}
+
+// ── UPLOAD ────────────────────────────────────────────────────────────────────
+function openUpload(){
+  document.getElementById('modal-upload').classList.add('open');
+  showStep1();
+}
+function showStep1(){
+  const t=currentTab;
+  document.getElementById('modal-upload-inner').innerHTML=`
+    <div class="modal-header"><h3>${t===1?'Cargar PDF — Enviado al Concesionario':'Cargar PDF — Recibido de la ANI'}</h3><button class="modal-close" onclick="closeModal('modal-upload')">×</button></div>
+    <div class="upload-zone" id="dropzone">
+      <input type="file" accept=".pdf" onchange="handleFile(this.files[0])">
+      <div class="uz-icon">📄</div>
+      <strong>Arrastra el PDF aquí o haz clic para seleccionarlo</strong>
+      <p>La IA extraerá automáticamente los datos del comunicado</p>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn sm" onclick="showManual(null,'','')">Ingresar manualmente</button>
+        <button class="btn sm success" onclick="showUploadRespConc()">Es respuesta del Concesionario</button>
+      </div>
+      <button class="btn" onclick="closeModal('modal-upload')">Cancelar</button>
+    </div>`;
+  const dz=document.getElementById('dropzone');
+  dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag')});
+  dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));
+  dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');if(e.dataTransfer.files[0])handleFile(e.dataTransfer.files[0])});
+}
+
+async function handleFile(file){
+  if(!file)return;
+  document.getElementById('modal-upload-inner').innerHTML=`<div class="modal-header"><h3>Procesando PDF</h3></div><div class="loading-box"><div class="spinner"></div><p>La IA está identificando el tipo de documento...</p><span class="fname">${file.name}</span></div>`;
+  try{
+    const base64=await fileToBase64(file);
+    const key=getApiKey();
+    if(!key)throw new Error('No hay API Key configurada.');
+    // First detect document type
+    const tipo=await detectTipoDoc(base64,key);
+    if(tipo==='respuesta_concesionario'){
+      await procesarRespConc(base64,file.name,key);
+    } else {
+      const data=await extractWithAI(base64,file.name,key);
+      showManual(data,file.name,'');
+    }
+  }catch(e){
+    document.getElementById('modal-upload-inner').innerHTML=`<div class="modal-header"><h3>Error</h3><button class="modal-close" onclick="closeModal('modal-upload')">×</button></div><div style="padding:1rem"><div style="background:var(--red-bg);border-left:3px solid var(--red);padding:12px;border-radius:0 4px 4px 0;font-size:13px;color:var(--red);margin-bottom:1rem">${e.message}</div><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" onclick="showStep1()">Reintentar</button><button class="btn primary" onclick="showManual(null,'','')">Ingresar manualmente</button></div></div>`;
+  }
+}
+
+async function detectTipoDoc(base64,apiKey){
+  const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:50,messages:[{role:'user',content:[{type:'document',source:{type:'base64',media_type:'application/pdf',data:base64}},{type:'text',text:'Clasifica este documento en UNA de estas categorías y responde SOLO con esa palabra: "traslado_interventoria" (comunicado de la interventoría al concesionario), "requerimiento_ani" (oficio de la ANI a la interventoría), "respuesta_concesionario" (respuesta del concesionario a cualquier entidad). Responde solo la categoría, sin más texto.'}]}]})});
+  if(!resp.ok)throw new Error(`Error API ${resp.status}`);
+  const data=await resp.json();
+  return data.content.map(c=>c.text||'').join('').trim().toLowerCase().replace(/[^a-z_]/g,'');
+}
+
+function showUploadRespConc(){
+  document.getElementById('modal-upload-inner').innerHTML=`
+    <div class="modal-header"><h3>Cargar respuesta del Concesionario</h3><button class="modal-close" onclick="closeModal('modal-upload')">×</button></div>
+    <div class="upload-zone" id="dropzone2">
+      <input type="file" accept=".pdf" onchange="handleFileRespConc(this.files[0])">
+      <div class="uz-icon">📄</div>
+      <strong>Arrastra el PDF de respuesta del Concesionario</strong>
+      <p>La IA detectará automáticamente los registros relacionados y los actualizará</p>
+    </div>
+    <div style="display:flex;justify-content:flex-end"><button class="btn" onclick="closeModal('modal-upload')">Cancelar</button></div>`;
+  const dz=document.getElementById('dropzone2');
+  dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag')});
+  dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));
+  dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');if(e.dataTransfer.files[0])handleFileRespConc(e.dataTransfer.files[0])});
+}
+
+async function handleFileRespConc(file){
+  if(!file)return;
+  document.getElementById('modal-upload-inner').innerHTML=`<div class="modal-header"><h3>Procesando respuesta</h3></div><div class="loading-box"><div class="spinner"></div><p>La IA está leyendo la respuesta del Concesionario...</p><span class="fname">${file.name}</span></div>`;
+  try{
+    const base64=await fileToBase64(file);
+    const key=getApiKey();
+    if(!key)throw new Error('No hay API Key configurada.');
+    await procesarRespConc(base64,file.name,key);
+  }catch(e){
+    document.getElementById('modal-upload-inner').innerHTML=`<div class="modal-header"><h3>Error</h3><button class="modal-close" onclick="closeModal('modal-upload')">×</button></div><div style="padding:1rem"><div style="background:var(--red-bg);border-left:3px solid var(--red);padding:12px;border-radius:0 4px 4px 0;font-size:13px;color:var(--red);margin-bottom:1rem">${e.message}</div><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" onclick="showUploadRespConc()">Reintentar</button></div></div>`;
+  }
+}
+
+async function procesarRespConc(base64,filename,apiKey){
+  document.getElementById('modal-upload-inner').innerHTML=`<div class="modal-header"><h3>Procesando respuesta</h3></div><div class="loading-box"><div class="spinner"></div><p>Extrayendo datos de la respuesta...</p><span class="fname">${filename}</span></div>`;
+  const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:500,messages:[{role:'user',content:[{type:'document',source:{type:'base64',media_type:'application/pdf',data:base64}},{type:'text',text:'Este es un documento de respuesta del Concesionario. Extrae los datos y responde SOLO con JSON válido sin backticks:
+{"fechaRespuesta":"YYYY-MM-DD","oficioRespuesta":"numero oficio del concesionario","radicadosANI":["lista de radicados ANI mencionados"],"radicadoInterno":"numero interno interventoria si aparece en sello","fechaRadInterno":"YYYY-MM-DD fecha sello recibido","observaciones":"resumen breve max 150 chars"}
+Usa null si no existe.'}]}]})});
+  if(!resp.ok)throw new Error(`Error API ${resp.status}`);
+  const data=await resp.json();
+  const txt=data.content.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim();
+  const d=JSON.parse(txt);
+  // Find related records
+  const radicados=d.radicadosANI||[];
+  const relacionados1=records1.filter(r=>radicados.includes(r.radicadoANI)&&!r.fechaRespuesta);
+  const relacionados2=records2.filter(r=>radicados.includes(r.radicadoANI)&&!r.fechaRespuestaInterv);
+  // Show confirmation
+  const lista1=relacionados1.map(r=>`• Pestaña 1: ${r.oficioInterventoria||r.radicadoANI} — ${(r.asunto||'').slice(0,50)}`).join('\n');
+  const lista2=relacionados2.map(r=>`• Pestaña 2: Interno ${r.radicadoInterno||r.radicadoANI} — ${(r.asunto||'').slice(0,50)}`).join('\n');
+  const totalRel=relacionados1.length+relacionados2.length;
+  if(totalRel===0){
+    document.getElementById('modal-upload-inner').innerHTML=`<div class="modal-header"><h3>Sin registros relacionados</h3><button class="modal-close" onclick="closeModal('modal-upload')">×</button></div><div style="padding:1rem"><div style="background:var(--amber-bg);border-left:3px solid #e08c00;padding:12px;border-radius:0 4px 4px 0;font-size:13px;color:var(--amber);margin-bottom:1rem">No se encontraron registros pendientes con los radicados ANI de este documento: ${radicados.join(', ')||'ninguno detectado'}</div><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" onclick="closeModal('modal-upload')">Cerrar</button></div></div>`;
+    return;
+  }
+  document.getElementById('modal-upload-inner').innerHTML=`
+    <div class="modal-header"><h3>Confirmar registro automático</h3><button class="modal-close" onclick="closeModal('modal-upload')">×</button></div>
+    <div class="ai-note"><strong>IA — respuesta detectada</strong>Oficio: ${d.oficioRespuesta||'—'} · Fecha: ${fmtDate(d.fechaRespuesta)} · Radicados: ${radicados.join(', ')}</div>
+    <div style="background:var(--green-bg);border-left:3px solid var(--green);padding:12px;border-radius:0 4px 4px 0;font-size:12px;color:var(--green);margin-bottom:1rem">
+      <strong style="display:block;margin-bottom:6px">Se actualizarán ${totalRel} registro(s):</strong>
+      ${lista1?lista1.replace(/\n/g,'<br>'):''}${lista2?'<br>'+lista2.replace(/\n/g,'<br>'):''}
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-upload')">Cancelar</button>
+      <button class="btn success" onclick="confirmarRespConc(${JSON.stringify(d).replace(/'/g,"\'")},'${filename}')">Registrar automáticamente</button>
+    </div>`;
+}
+
+function confirmarRespConc(d,filename){
+  const radicados=d.radicadosANI||[];
+  let count=0;
+  records1.forEach(r=>{
+    if(radicados.includes(r.radicadoANI)&&!r.fechaRespuesta){
+      r.fechaRespuesta=d.fechaRespuesta||'';
+      r.oficioRespuesta=d.oficioRespuesta||'';
+      if(d.observaciones)r.observaciones=(r.observaciones||'')+' | Resp: '+d.observaciones;
+      count++;
+    }
+  });
+  records2.forEach(r=>{
+    if(radicados.includes(r.radicadoANI)&&!r.fechaRespuestaInterv){
+      r.fechaRespuestaInterv=d.fechaRespuesta||'';
+      r.oficioRespuestaInterv=d.oficioRespuesta||'';
+      if(d.radicadoInterno)r.radicadoInterno=r.radicadoInterno||d.radicadoInterno;
+      count++;
+    }
+  });
+  save();closeModal('modal-upload');render();
+  alert(`✅ ${count} registro(s) actualizado(s) automáticamente con la respuesta del Concesionario.`);
+}
+
+function fileToBase64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=()=>rej(new Error('No se pudo leer el archivo'));r.readAsDataURL(file)})}
+
+async function extractWithAI(base64,filename,apiKey){
+  const t=currentTab;
+  const prompt = t===1
+    ? `Extrae datos de este comunicado de interventoría enviado al concesionario. Responde SOLO JSON válido sin backticks:
+{"radicadoANI":"numero radicado ANI","fechaRecepcionANI":"YYYY-MM-DD fecha del radicado ANI","asunto":"descripcion corta max 120 chars","oficioInterventoria":"numero oficio interventoria","fechaTraslado":"YYYY-MM-DD fecha del comunicado","plazo":dias_habiles_entero,"observaciones":"notas max 200 chars"}
+Usa null si no existe.`
+    : `Extrae datos de este comunicado/requerimiento recibido de la ANI. Responde SOLO JSON válido sin backticks:
+{"radicadoANI":"numero radicado ANI","fechaRecepcion":"YYYY-MM-DD fecha recepcion del comunicado","asunto":"descripcion corta max 120 chars","oficioANI":"numero oficio de la ANI","plazo":dias_habiles_entero_para_responder,"observaciones":"notas max 200 chars"}
+Usa null si no existe.`;
+  const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:[{type:'document',source:{type:'base64',media_type:'application/pdf',data:base64}},{type:'text',text:prompt}]}]})});
+  if(!resp.ok){const err=await resp.json().catch(()=>({}));throw new Error(err.error?.message||`Error API ${resp.status}`)}
+  const data=await resp.json();
+  const txt=data.content.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim();
+  return JSON.parse(txt);
+}
+
+function showManual(data,filename,editIdx){
+  const d=data||{};
+  const t=currentTab;
+  const isEdit=editIdx!==''&&editIdx!==null;
+  const ft=t===1?(d.fechaTraslado||''):(d.fechaRecepcion||'');
+  const lim=ft&&d.plazo?calcLimite(ft,d.plazo):'';
+  document.getElementById('modal-upload-inner').innerHTML=`
+    <div class="modal-header"><h3>${isEdit?'Editar registro':'Confirmar datos extraídos'}</h3><button class="modal-close" onclick="closeModal('modal-upload')">×</button></div>
+    ${data?`<div class="ai-note ${t===2?'t2':''}"><strong>IA — datos extraídos</strong>Revise y corrija si es necesario. Archivo: ${filename}</div>`:''}
+    <div class="grid2">
+      <div class="field"><label>Radicado ANI</label><input id="f-radicado" value="${d.radicadoANI||''}"></div>
+      <div class="field"><label>Radicado Interno Interventoría</label><input id="f-radinterno" value="${d.radicadoInterno||''}" placeholder="Ej. 4043"></div></div><div class="grid2"><div class="field"><label>Fecha radicado interno</label><input type="date" id="f-radfecha" value="${d.fechaRadInterno||''}"></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>${t===1?'Oficio Interventoría':'Oficio ANI'}</label><input id="f-oficio" value="${t===1?(d.oficioInterventoria||''):(d.oficioANI||'')}"></div>
+      <div class="field"><label>Fecha recepción comunicado ANI</label><input type="date" id="f-fecRec" value="${d.fechaRecepcionANI||d.fechaRecepcion||''}"></div>
+    </div>
+    <div class="field">
+      <label>${t===1?'Fecha traslado al concesionario':'Fecha límite (desde recepción)'}</label>
+      <input type="date" id="f-fecTra" value="${ft}" oninput="calcLimiteForm()">
+    </div>
+    <div class="field"><label>Asunto</label><input id="f-asunto" value="${d.asunto||''}"></div>
+    <div class="grid2">
+      <div class="field"><label>Plazo (días hábiles)</label><input type="number" id="f-plazo" value="${d.plazo||15}" min="1" oninput="calcLimiteForm()"></div>
+      <div class="field"><label>Fecha límite (automática)</label><input type="date" id="f-limite" value="${lim}" readonly></div>
+    </div>
+    <div class="field"><label>Nombre archivo PDF</label><input id="f-pdf" value="${filename||''}"></div>
+    <div class="field"><label>Observaciones</label><textarea id="f-obs">${d.observaciones||''}</textarea></div>
+    <div class="modal-footer">
+      ${!isEdit?`<button class="btn" onclick="showStep1()">← Volver</button>`:''}
+      <button class="btn" onclick="closeModal('modal-upload')">Cancelar</button>
+      <button class="btn ${t===1?'primary':'primary2'}" onclick="${isEdit?`guardarEdicion(${editIdx})`:'guardarNuevo()'}">${isEdit?'Guardar cambios':'Guardar registro'}</button>
+    </div>`;
+}
+
+function calcLimiteForm(){
+  const ft=document.getElementById('f-fecTra')?.value;
+  const pl=document.getElementById('f-plazo')?.value;
+  const el=document.getElementById('f-limite');
+  if(ft&&pl&&el)el.value=calcLimite(ft,parseInt(pl));
+}
+
+function getFormData(){
+  const t=currentTab;
+  const ft=document.getElementById('f-fecTra').value;
+  const pl=parseInt(document.getElementById('f-plazo').value)||15;
+  const base={radicadoANI:document.getElementById('f-radicado').value.trim(),radicadoInterno:document.getElementById('f-radinterno').value.trim(),fechaRadInterno:document.getElementById('f-radfecha')?.value||'',fechaRecepcion:document.getElementById('f-fecRec').value,asunto:document.getElementById('f-asunto').value.trim(),plazo:pl,fechaLimite:calcLimite(ft,pl),archivoPDF:document.getElementById('f-pdf').value.trim(),observaciones:document.getElementById('f-obs').value.trim()};
+  if(t===1) return{...base,oficioInterventoria:document.getElementById('f-oficio').value.trim(),fechaTraslado:ft};
+  else return{...base,oficioANI:document.getElementById('f-oficio').value.trim(),fechaRecepcion:ft};
+}
+
+function guardarNuevo(){
+  const t=currentTab;
+  const rec={...getFormData(),fechaRespuesta:'',oficioRespuesta:'',fechaRespuestaInterv:'',oficioRespuestaInterv:''};
+  if(t===1)records1.push(rec);else records2.push(rec);
+  save();closeModal('modal-upload');render();
+}
+
+function guardarEdicion(i){
+  const t=currentTab;
+  const recs=t===1?records1:records2;
+  recs[i]={...recs[i],...getFormData()};
+  save();closeModal('modal-upload');render();
+}
+
+function abrirRespuesta(i){editingRespIdx=i;document.getElementById('r-fecha').value=todayStr();document.getElementById('r-oficio').value='';document.getElementById('r-obs').value='';document.getElementById('modal-respuesta').classList.add('open')}
+function guardarRespuesta(){
+  const i=editingRespIdx;
+  const fecha=document.getElementById('r-fecha').value;
+  const oficio=document.getElementById('r-oficio').value.trim();
+  const obs=document.getElementById('r-obs').value.trim();
+  records1[i].fechaRespuesta=fecha;
+  records1[i].oficioRespuesta=oficio;
+  if(obs)records1[i].observaciones=(records1[i].observaciones||'')+' | '+obs;
+  // Auto-link: buscar registro relacionado en Pestaña 2 por radicado ANI
+  const radicado=records1[i].radicadoANI;
+  if(radicado){
+    const idx2=records2.findIndex(r=>r.radicadoANI===radicado&&!r.fechaRespuestaInterv);
+    if(idx2>=0){
+      const r2=records2[idx2];
+      if(confirm(`Se encontró el registro relacionado en Pestaña 2:\n\nInterno: ${r2.radicadoInterno||'—'} — ${(r2.asunto||'').slice(0,60)}\n\n¿Registrar también la respuesta del Concesionario en ese registro?`)){
+        records2[idx2].fechaRespuestaInterv=fecha;
+        records2[idx2].oficioRespuestaInterv=oficio;
+        if(obs)records2[idx2].observaciones=(records2[idx2].observaciones||'')+' | Vinculado desde '+records1[i].oficioInterventoria;
+      }
+    }
+  }
+  save();closeModal('modal-respuesta');render();
+}
+
+function abrirRespuesta2(i){editingRespIdx=i;document.getElementById('r2-fecha').value=todayStr();document.getElementById('r2-oficio').value='';document.getElementById('r2-obs').value='';document.getElementById('modal-respuesta2').classList.add('open')}
+function guardarRespuesta2(){const i=editingRespIdx;records2[i].fechaRespuestaInterv=document.getElementById('r2-fecha').value;records2[i].oficioRespuestaInterv=document.getElementById('r2-oficio').value.trim();const obs=document.getElementById('r2-obs').value.trim();if(obs)records2[i].observaciones=(records2[i].observaciones||'')+' | '+obs;save();closeModal('modal-respuesta2');render()}
+
+function abrirRespANI(i){editingRespIdx=i;document.getElementById('ra-fecha').value=todayStr();document.getElementById('ra-oficio').value='';document.getElementById('ra-obs').value='';document.getElementById('modal-resp-ani').classList.add('open')}
+function guardarRespANI(){const i=editingRespIdx;records1[i].fechaRespANI=document.getElementById('ra-fecha').value;records1[i].oficioRespANI=document.getElementById('ra-oficio').value.trim();const obs=document.getElementById('ra-obs').value.trim();if(obs)records1[i].observaciones=(records1[i].observaciones||'')+' | Resp ANI: '+obs;save();closeModal('modal-resp-ani');render()}
+
+function abrirRespANI2(i){editingRespIdx=i;document.getElementById('ra2-fecha').value=todayStr();document.getElementById('ra2-oficio').value='';document.getElementById('ra2-obs').value='';document.getElementById('modal-resp-ani2').classList.add('open')}
+function guardarRespANI2_t2(){const i=editingRespIdx;records2[i].fechaRespANI2=document.getElementById('ra2-fecha').value;records2[i].oficioRespANI2=document.getElementById('ra2-oficio').value.trim();const obs=document.getElementById('ra2-obs').value.trim();if(obs)records2[i].observaciones=(records2[i].observaciones||'')+' | Resp ANI: '+obs;save();closeModal('modal-resp-ani2');render()}
+
+function editarReg(i){document.getElementById('modal-upload').classList.add('open');const t=currentTab;const r=t===1?records1[i]:records2[i];showManual(t===1?{...r,fechaRecepcionANI:r.fechaRecepcion,oficioInterventoria:r.oficioInterventoria,fechaTraslado:r.fechaTraslado}:{...r},r.archivoPDF||'',i)}
+function eliminar(i){if(!confirm('¿Eliminar este registro?'))return;const t=currentTab;if(t===1)records1.splice(i,1);else records2.splice(i,1);save();render()}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+
+function limpiarTodo(){
+  if(!confirm('¿Borrar TODOS los registros de esta pestaña?'))return;
+  if(currentTab===1)records1=[];else records2=[];
+  save();render();
+}
+
+// ── IMPORT ────────────────────────────────────────────────────────────────────
+function triggerImport(){document.getElementById('import-input').value='';document.getElementById('import-input').click()}
+function parseFecha(val){
+  if(!val)return'';
+  if(val instanceof Date){const d=val;return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+  const s=String(val).trim();
+  const m1=s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);if(m1)return`${m1[3]}-${m1[2].padStart(2,'0')}-${m1[1].padStart(2,'0')}`;
+  const m2=s.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);if(m2)return`${m2[1]}-${m2[2].padStart(2,'0')}-${m2[3].padStart(2,'0')}`;
+  return'';
+}
+function importExcel(input){
+  if(!window.XLSX){alert('Librería no cargada');return}
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const wb2=XLSX.read(e.target.result,{type:'array',cellDates:true});
+      const ws2=wb2.Sheets['REGISTRO']||wb2.Sheets[wb2.SheetNames[0]];
+      const rows=XLSX.utils.sheet_to_json(ws2,{header:1,defval:''});
+      let startRow=0;
+      for(let i=0;i<rows.length;i++){if(String(rows[i][0]).toLowerCase().includes('radicado')){startRow=i+1;break}}
+      let imported=0,skipped=0;
+      const t=currentTab;
+      const recs=t===1?records1:records2;
+      for(let i=startRow;i<rows.length;i++){
+        const r=rows[i];
+        const radicado=String(r[0]||'').trim();
+        const radInterno=String(r[1]||'').trim();
+        const fechaRadInterno=parseFecha(r[2]);
+        const oficio=String(r[5]||'').trim();
+        const todas=r.map(x=>String(x||'').toLowerCase()).join(' ');
+        if(!radicado&&!oficio)continue;
+        if(todas.includes('ejemplo')||todas.includes('fila amarilla')||todas.includes('bórrela'))continue;
+        const existe=recs.find(x=>(t===1?x.oficioInterventoria:x.oficioANI)===oficio&&oficio!=='');
+        if(existe){skipped++;continue}
+        const ft=parseFecha(r[6]);const pl=parseInt(r[7])||15;
+        const rec={radicadoANI:radicado,radicadoInterno:radInterno,fechaRadInterno:fechaRadInterno,fechaRecepcion:parseFecha(r[3]),asunto:String(r[4]||'').trim(),plazo:pl,fechaLimite:ft?calcLimite(ft,pl):'',archivoPDF:String(r[8]||'').trim(),observaciones:String(r[11]||'').trim(),fechaRespuesta:parseFecha(r[9]),oficioRespuesta:String(r[10]||'').trim(),fechaRespuestaInterv:'',oficioRespuestaInterv:''};
+        if(t===1){rec.oficioInterventoria=oficio;rec.fechaTraslado=ft}else{rec.oficioANI=oficio;rec.fechaRecepcion=ft}
+        recs.push(rec);imported++;
+      }
+      save();render();alert(`✅ Importación:
+• ${imported} importado(s)
+• ${skipped} duplicado(s) omitido(s)`);
+    }catch(err){alert('Error: '+err.message)}
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+// ── EXPORT ────────────────────────────────────────────────────────────────────
+function exportExcel(){
+  if(!window.XLSX){alert('Librería no cargada');return}
+  const t=currentTab;const recs=currentRecords();
+  const rows=[t===1
+    ?['N°','Radicado ANI','Rad. Interno','Fecha Recepción ANI','Asunto','Oficio Interventoría','Fecha Traslado','Plazo','Fecha Límite','Días Restantes','Estado','Fecha Resp. Concesionario','Oficio Resp. Concesionario','Fecha Resp. a ANI','Oficio Resp. a ANI','Cumplimiento','Archivo PDF','Observaciones']
+    :['N°','Radicado ANI','Fecha Recepción','Asunto','Oficio ANI','Fecha Límite Respuesta','Plazo','Fecha Límite','Días Restantes','Estado','Fecha Nuestra Respuesta','Nuestro Oficio','Cumplimiento','Archivo PDF','Observaciones']];
+  recs.forEach((r,i)=>{
+    const st=getStatus(r,t);const dias=getDias(r,t);
+    const respField=t===1?'fechaRespuesta':'fechaRespuestaInterv';
+    const oficioRespField=t===1?'oficioRespuesta':'oficioRespuestaInterv';
+    const cumpl=r[respField]?(r[respField]<=r.fechaLimite?'A tiempo':'Tardío'):'Pendiente';
+    const fechaAcc=t===1?r.fechaTraslado:r.fechaRecepcion;
+    const oficioAcc=t===1?r.oficioInterventoria:r.oficioANI;
+    if(t===1) rows.push([i+1,r.radicadoANI,r.radicadoInterno,r.fechaRecepcion,r.asunto,oficioAcc,fechaAcc,r.plazo,r.fechaLimite,dias??'',st.label,r.fechaRespuesta,r.oficioRespuesta,r.fechaRespANI,r.oficioRespANI,cumpl,r.archivoPDF,r.observaciones]);
+    else rows.push([i+1,r.radicadoANI,r.radicadoInterno,r.fechaRecepcion,r.asunto,oficioAcc,fechaAcc,r.plazo,r.fechaLimite,dias??'',st.label,r[respField],r[oficioRespField],cumpl,r.archivoPDF,r.observaciones]);
+  });
+  const wb=XLSX.utils.book_new();const ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=[4,18,14,40,18,14,12,14,12,12,18,16,12,35,40].map(w=>({wch:w}));
+  XLSX.utils.book_append_sheet(wb,ws,t===1?'Enviada Concesionario':'Recibida ANI');
+  XLSX.writeFile(wb,`Control_${t===1?'T1_Concesionario':'T2_ANI'}_${todayStr()}.xlsx`);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+const hoy=fmtDate(todayStr());
+document.getElementById('topbar-date').textContent=hoy;
+document.getElementById('footer-date').textContent=hoy;
+checkApiKeyBar();
+
+// Load from embedded store first, then localStorage
+try{
+  const embedded = document.getElementById('data-store').value.trim();
+  if(embedded && embedded !== '{"r1":[],"r2":[]}'){
+    const parsed = JSON.parse(embedded.replace(/&lt;/g,'<').replace(/&gt;/g,'>'));
+    if(parsed.r1 && parsed.r1.length) records1 = parsed.r1;
+    if(parsed.r2 && parsed.r2.length) records2 = parsed.r2;
+  }
+}catch(e){}
+// Fallback to localStorage
+if(!records1.length) try{ records1=JSON.parse(localStorage.getItem('ani_dp_t1')||'[]'); }catch(e){}
+if(!records2.length) try{ records2=JSON.parse(localStorage.getItem('ani_dp_t2')||'[]'); }catch(e){}
+// Migrar datos anteriores si existen
+try{ const oldRecs=JSON.parse(localStorage.getItem('ani_dp_records')||'[]'); if(oldRecs.length&&!records1.length){records1=oldRecs;save()} }catch(e){}
+
+render();
+</script>
+</body>
+</html>
