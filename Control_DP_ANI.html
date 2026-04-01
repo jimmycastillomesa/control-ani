@@ -216,10 +216,10 @@ tbody tr:hover td{background:var(--surface2)}
 <!-- MODAL RESPUESTA T1 -->
 <div class="modal-bg" id="modal-respuesta">
   <div class="modal">
-    <div class="modal-header"><h3>Registrar respuesta del concesionario</h3><button class="modal-close" onclick="closeModal('modal-respuesta')">×</button></div>
+    <div class="modal-header"><h3>Registrar respuesta del concesionario</h3><button class="modal-close" onclick="closeModal('modal-respuesta')">x</button></div>
     <div class="grid2">
       <div class="field"><label>Fecha de respuesta</label><input type="date" id="r-fecha"></div>
-      <div class="field"><label>N° oficio respuesta</label><input type="text" id="r-oficio" placeholder="Ej. S1-045678"></div>
+      <div class="field"><label>No oficio respuesta</label><input type="text" id="r-oficio" placeholder="Ej. S1-045678"></div>
     </div>
     <div class="field"><label>Observaciones adicionales</label><textarea id="r-obs"></textarea></div>
     <div class="modal-footer">
@@ -232,11 +232,11 @@ tbody tr:hover td{background:var(--surface2)}
 <!-- MODAL RESP ANI (desde pestaña 1, después de que concesionario respondió) -->
 <div class="modal-bg" id="modal-resp-ani">
   <div class="modal">
-    <div class="modal-header"><h3>Registrar respuesta enviada a la ANI</h3><button class="modal-close" onclick="closeModal('modal-resp-ani')">×</button></div>
+    <div class="modal-header"><h3>Registrar respuesta enviada a la ANI</h3><button class="modal-close" onclick="closeModal('modal-resp-ani')">x</button></div>
     <div class="ai-note"><strong>Paso final del flujo</strong>El concesionario ya respondió. Registre aquí el oficio con que ustedes le dieron concepto a la ANI.</div>
     <div class="grid2">
       <div class="field"><label>Fecha en que respondieron a la ANI</label><input type="date" id="ra-fecha"></div>
-      <div class="field"><label>N° oficio enviado a la ANI</label><input type="text" id="ra-oficio" placeholder="Ej. NEG005-3500-26"></div>
+      <div class="field"><label>No oficio enviado a la ANI</label><input type="text" id="ra-oficio" placeholder="Ej. NEG005-3500-26"></div>
     </div>
     <div class="field"><label>Observaciones</label><textarea id="ra-obs" placeholder="Concepto emitido, notas..."></textarea></div>
     <div class="modal-footer">
@@ -249,11 +249,11 @@ tbody tr:hover td{background:var(--surface2)}
 <!-- MODAL RESP ANI TYPE 2 -->
 <div class="modal-bg" id="modal-resp-ani2">
   <div class="modal">
-    <div class="modal-header"><h3>Registrar nuestra respuesta a la ANI</h3><button class="modal-close" onclick="closeModal('modal-resp-ani2')">×</button></div>
+    <div class="modal-header"><h3>Registrar nuestra respuesta a la ANI</h3><button class="modal-close" onclick="closeModal('modal-resp-ani2')">x</button></div>
     <div class="ai-note t2"><strong>Paso final del flujo</strong>El concesionario ya respondió. Registre el oficio con que ustedes le dieron concepto a la ANI.</div>
     <div class="grid2">
       <div class="field"><label>Fecha respuesta enviada a la ANI</label><input type="date" id="ra2-fecha"></div>
-      <div class="field"><label>N° oficio enviado a la ANI</label><input type="text" id="ra2-oficio" placeholder="Ej. NEG005-3500-26"></div>
+      <div class="field"><label>No oficio enviado a la ANI</label><input type="text" id="ra2-oficio" placeholder="Ej. NEG005-3500-26"></div>
     </div>
     <div class="field"><label>Observaciones</label><textarea id="ra2-obs" placeholder="Concepto emitido..."></textarea></div>
     <div class="modal-footer">
@@ -266,10 +266,10 @@ tbody tr:hover td{background:var(--surface2)}
 <!-- MODAL RESPUESTA T2 (nuestra respuesta a la ANI) -->
 <div class="modal-bg" id="modal-respuesta2">
   <div class="modal">
-    <div class="modal-header"><h3>Registrar respuesta enviada a la ANI</h3><button class="modal-close" onclick="closeModal('modal-respuesta2')">×</button></div>
+    <div class="modal-header"><h3>Registrar respuesta enviada a la ANI</h3><button class="modal-close" onclick="closeModal('modal-respuesta2')">x</button></div>
     <div class="grid2">
       <div class="field"><label>Fecha respuesta enviada</label><input type="date" id="r2-fecha"></div>
-      <div class="field"><label>N° oficio enviado a ANI</label><input type="text" id="r2-oficio" placeholder="Ej. NEG005-3500-26"></div>
+      <div class="field"><label>No oficio enviado a ANI</label><input type="text" id="r2-oficio" placeholder="Ej. NEG005-3500-26"></div>
     </div>
     <div class="field"><label>Observaciones</label><textarea id="r2-obs"></textarea></div>
     <div class="modal-footer">
@@ -281,16 +281,16 @@ tbody tr:hover td{background:var(--surface2)}
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
-// ── FESTIVOS ──────────────────────────────────────────────────────────────────
+
 const HOLIDAYS = new Set(['2025-01-01','2025-01-06','2025-03-24','2025-04-17','2025-04-18','2025-05-01','2025-06-02','2025-06-23','2025-06-30','2025-07-07','2025-07-20','2025-08-07','2025-08-18','2025-10-13','2025-11-03','2025-11-17','2025-12-08','2025-12-25','2026-01-01','2026-01-12','2026-03-23','2026-04-02','2026-04-03','2026-05-01','2026-05-18','2026-06-08','2026-06-15','2026-06-29','2026-07-20','2026-08-07','2026-08-17','2026-10-12','2026-11-02','2026-11-16','2026-12-08','2026-12-25','2027-01-01','2027-01-11','2027-03-22','2027-04-01','2027-04-02','2027-05-01','2027-05-17','2027-06-07','2027-06-14','2027-06-28','2027-07-20','2027-08-07','2027-08-16','2027-10-18','2027-11-01','2027-11-15','2027-12-08','2027-12-25']);
 function isWorkday(d){const w=d.getDay();if(w===0||w===6)return false;return!HOLIDAYS.has(d.toISOString().slice(0,10))}
 function addWorkdays(s,n){const d=new Date(s+'T12:00:00');let c=0;while(c<n){d.setDate(d.getDate()+1);if(isWorkday(d))c++;}return d.toISOString().slice(0,10)}
 function workdaysBetween(f,t){const from=new Date(f+'T12:00:00'),to=new Date(t+'T12:00:00');let d=new Date(from),c=0,s=to>=from?1:-1;while(d.toDateString()!==to.toDateString()){d.setDate(d.getDate()+s);if(isWorkday(d))c+=s;}return c}
 function todayStr(){return new Date().toISOString().slice(0,10)}
-function fmtDate(s){if(!s)return'—';const[y,m,d]=s.split('-');return`${d}/${m}/${y}`}
+function fmtDate(s){if(!s)return'-';const[y,m,d]=s.split('-');return`${d}/${m}/${y}`}
 function calcLimite(ft,pl){if(!ft||!pl)return'';return addWorkdays(ft,parseInt(pl))}
 
-// ── STATE ─────────────────────────────────────────────────────────────────────
+
 let records1 = JSON.parse(localStorage.getItem('ani_dp_t1')||'[]'); // Enviada al concesionario
 let records2 = JSON.parse(localStorage.getItem('ani_dp_t2')||'[]'); // Recibida de ANI
 let currentTab = 1;
@@ -317,13 +317,13 @@ function downloadWithData(){
 }
 function currentRecords(){return currentTab===1?records1:records2}
 
-// ── API KEY ───────────────────────────────────────────────────────────────────
+
 function getApiKey(){return localStorage.getItem('ani_apikey')||''}
 function saveApiKey(){localStorage.setItem('ani_apikey',document.getElementById('apikey-input').value.trim());checkApiKeyBar()}
 function checkApiKeyBar(){document.getElementById('apikey-bar').style.display=getApiKey()?'none':'flex'}
 function toggleSettings(){const p=document.getElementById('settings-panel');p.classList.toggle('open');if(p.classList.contains('open'))document.getElementById('apikey-input').value=getApiKey()}
 
-// ── TABS ──────────────────────────────────────────────────────────────────────
+
 function switchTab(n){
   currentTab=n;
   document.getElementById('tab1').className='tab t1'+(n===1?' active':'');
@@ -333,18 +333,18 @@ function switchTab(n){
   render();
 }
 
-// ── STATUS ────────────────────────────────────────────────────────────────────
+
 function getStatus(r, type){
   if(!r.fechaTraslado && type===1) return{label:'Sin traslado',cls:'sin'};
   if(!r.fechaRecepcion && type===2) return{label:'Sin fecha',cls:'sin'};
   if(type===1){
-    // Si ya respondió a la ANI -> cerrado
+    // Si ya respondio a la ANI -> cerrado
     if(r.fechaRespANI) return{label:'Cerrado',cls:'respondido'};
-    // Si concesionario respondió pero falta respuesta a ANI
+    // Si concesionario respondio pero falta respuesta a ANI
     if(r.fechaRespuesta && !r.fechaRespANI){
       const dias=workdaysBetween(todayStr(),r.fechaLimite);
       if(dias<0) return{label:'Resp. ANI vencida',cls:'vencido'};
-      if(dias<=2) return{label:'Resp. ANI crítica',cls:'critico'};
+      if(dias<=2) return{label:'Resp. ANI critica',cls:'critico'};
       return{label:'Pendiente ANI',cls:'proximo'};
     }
   }
@@ -354,7 +354,7 @@ function getStatus(r, type){
     if(r.fechaRespuestaInterv && !r.fechaRespANI2){
       const dias=workdaysBetween(todayStr(),r.fechaLimite);
       if(dias<0) return{label:'Resp. ANI vencida',cls:'vencido'};
-      if(dias<=2) return{label:'Resp. ANI crítica',cls:'critico'};
+      if(dias<=2) return{label:'Resp. ANI critica',cls:'critico'};
       return{label:'Pendiente ANI',cls:'proximo'};
     }
   }
@@ -362,8 +362,8 @@ function getStatus(r, type){
   if(!lim) return{label:'Sin plazo',cls:'sin'};
   const dias=workdaysBetween(todayStr(),lim);
   if(dias<0) return{label:'Vencido',cls:'vencido'};
-  if(dias<=2) return{label:'Crítico',cls:'critico'};
-  if(dias<=7) return{label:'Próximo',cls:'proximo'};
+  if(dias<=2) return{label:'Critico',cls:'critico'};
+  if(dias<=7) return{label:'Proximo',cls:'proximo'};
   return{label:'En tiempo',cls:'tiempo'};
 }
 function getDias(r, type){
@@ -376,7 +376,7 @@ function getDias(r, type){
   return workdaysBetween(todayStr(),r.fechaLimite);
 }
 
-// ── RENDER ────────────────────────────────────────────────────────────────────
+
 function render(){
   renderKpis();
   renderHeaders();
@@ -405,16 +405,16 @@ function renderKpis(){
   const colorAccVal = type===1?'k-blue':'k-orange';
   document.getElementById('kpi-row').innerHTML=`
     <div class="kpi-card ${colorAcc}"><div class="kpi-label">${type===1?'Total trasladados':'Total recibidos'}</div><div class="kpi-val ${colorAccVal}">${total}</div><div class="kpi-sub">${type===1?'al concesionario':'de la ANI'}</div></div>
-    <div class="kpi-card k-green"><div class="kpi-label">Respondidos</div><div class="kpi-val k-green">${resp}</div><div class="kpi-sub">${type===1?'por el concesionario':'por interventoría'}</div></div>
+    <div class="kpi-card k-green"><div class="kpi-label">Respondidos</div><div class="kpi-val k-green">${resp}</div><div class="kpi-sub">${type===1?'por el concesionario':'por interventoria'}</div></div>
     <div class="kpi-card k-red"><div class="kpi-label">Vencidos</div><div class="kpi-val k-red">${venc}</div><div class="kpi-sub">plazo superado</div></div>
-    <div class="kpi-card k-amber"><div class="kpi-label">Críticos ≤2 días</div><div class="kpi-val k-amber">${crit}</div><div class="kpi-sub">requieren gestión</div></div>`;
+    <div class="kpi-card k-amber"><div class="kpi-label">Criticos 2 dias</div><div class="kpi-val k-amber">${crit}</div><div class="kpi-sub">requieren gestion</div></div>`;
 }
 
 function renderHeaders(){
   const t=currentTab;
   const h1 = t===1
-    ? ['N°','Radicado ANI','Rad. Interno','Recepción ANI','Asunto','Oficio Interventoría','Fecha Traslado','Plazo','Fecha Límite','Días Rest.','Estado','Resp. Concesionario','Resp. a la ANI','Cumplimiento','Acciones']
-    : ['N°','Radicado ANI','Rad. Interno','Fecha Recepción','Asunto','Oficio ANI','Nuestra Fecha Límite','Plazo','Fecha Límite','Días Rest.','Estado','Resp. Concesionario','Resp. a la ANI','Cumplimiento','Acciones'];
+    ? ['No','Radicado ANI','Rad. Interno','Recepcion ANI','Asunto','Oficio Interventoria','Fecha Traslado','Plazo','Fecha Limite','Dias Rest.','Estado','Resp. Concesionario','Resp. a la ANI','Cumplimiento','Acciones']
+    : ['No','Radicado ANI','Rad. Interno','Fecha Recepcion','Asunto','Oficio ANI','Nuestra Fecha Limite','Plazo','Fecha Limite','Dias Rest.','Estado','Resp. Concesionario','Resp. a la ANI','Cumplimiento','Acciones'];
   document.getElementById('thead-row').innerHTML='<tr>'+h1.map(h=>`<th>${h}</th>`).join('')+'</tr>';
 }
 
@@ -429,12 +429,12 @@ function renderTable(){
     const realIdx=recs.indexOf(r);
     const st=getStatus(r,type);
     const dias=getDias(r,type);
-    const diasHtml=dias===null?'<span style="color:var(--text3)">—</span>':`<span class="dias-cell ${dias<0?'neg':dias<=2?'low':'ok'}">${dias}</span>`;
+    const diasHtml=dias===null?'<span style="color:var(--text3)">-</span>':`<span class="dias-cell ${dias<0?'neg':dias<=2?'low':'ok'}">${dias}</span>`;
     const respField=type===1?'fechaRespuesta':'fechaRespuestaInterv';
     const oficioRespField=type===1?'oficioRespuesta':'oficioRespuestaInterv';
-    const cumpl=r[respField]?(r[respField]<=r.fechaLimite?'<span style="color:var(--green);font-size:10px;font-weight:600;font-family:var(--mono)">A tiempo</span>':'<span style="color:var(--red);font-size:10px;font-weight:600;font-family:var(--mono)">Tardío</span>'):'<span style="color:var(--text3);font-size:11px">—</span>';
-    const respCell=r[respField]?`<div>${fmtDate(r[respField])}</div><div class="oficio-code ${type===2?'t2':''}">${r[oficioRespField]||''}</div>`:'<span style="color:var(--text3)">—</span>';
-    const oficioCell=type===1?`<span class="oficio-code">${r.oficioInterventoria||'—'}</span>`:`<span class="oficio-code t2">${r.oficioANI||'—'}</span>`;
+    const cumpl=r[respField]?(r[respField]<=r.fechaLimite?'<span style="color:var(--green);font-size:10px;font-weight:600;font-family:var(--mono)">A tiempo</span>':'<span style="color:var(--red);font-size:10px;font-weight:600;font-family:var(--mono)">Tardio</span>'):'<span style="color:var(--text3);font-size:11px">-</span>';
+    const respCell=r[respField]?`<div>${fmtDate(r[respField])}</div><div class="oficio-code ${type===2?'t2':''}">${r[oficioRespField]||''}</div>`:'<span style="color:var(--text3)">-</span>';
+    const oficioCell=type===1?`<span class="oficio-code">${r.oficioInterventoria||'-'}</span>`:`<span class="oficio-code t2">${r.oficioANI||'-'}</span>`;
     const fechaCell=type===1?fmtDate(r.fechaTraslado):fmtDate(r.fechaRecepcion);
     // ANI response cell (only for type 1)
     const aniRespCell = type===1
@@ -455,13 +455,13 @@ function renderTable(){
       : '';
     const colsT1 = type===1 ? `<td style="font-size:11px">${aniRespCell}</td>` : `<td style="font-size:11px">${aniRespCell2}</td>`;
     const cumplFinal = type===1
-      ? (r.fechaRespANI ? (r.fechaRespANI<=r.fechaLimite?'<span style="color:var(--green);font-size:10px;font-weight:600;font-family:var(--mono)">A tiempo</span>':'<span style="color:var(--red);font-size:10px;font-weight:600;font-family:var(--mono)">Tardío</span>') : cumpl)
-      : (r.fechaRespANI2 ? (r.fechaRespANI2<=r.fechaLimite?'<span style="color:var(--green);font-size:10px;font-weight:600;font-family:var(--mono)">A tiempo</span>':'<span style="color:var(--red);font-size:10px;font-weight:600;font-family:var(--mono)">Tardío</span>') : cumpl);
-    return`<tr><td style="color:var(--text3);font-family:var(--mono)">${i+1}</td><td><span class="oficio-code">${r.radicadoANI||'—'}</span></td><td><div style="font-family:var(--mono);font-size:11px;background:var(--surface2);padding:2px 6px;border-radius:3px;white-space:nowrap">${r.radicadoInterno||'—'}</div>${r.fechaRadInterno?`<div style="font-size:10px;color:var(--text3)">${fmtDate(r.fechaRadInterno)}</div>`:''}</td><td style="font-size:11px;white-space:nowrap">${fmtDate(r.fechaRecepcion)}</td><td style="max-width:180px;font-size:11px;line-height:1.4">${(r.asunto||'—').slice(0,90)}${(r.asunto||'').length>90?'…':''}</td><td>${oficioCell}</td><td style="white-space:nowrap;font-size:11px">${fechaCell}</td><td><span style="font-family:var(--mono);font-size:11px;background:var(--surface2);padding:2px 6px;border-radius:3px">${r.plazo||15}d</span></td><td style="white-space:nowrap;font-size:11px">${fmtDate(r.fechaLimite)}</td><td style="text-align:center">${diasHtml}</td><td><span class="badge ${st.cls}">${st.label}</span></td><td style="font-size:11px">${respCell}</td>${colsT1}<td>${cumplFinal}</td><td><div style="display:flex;gap:4px;flex-wrap:wrap">${btnResp}<button class="btn sm" onclick="editarReg(${realIdx})">Editar</button><button class="btn sm danger" onclick="eliminar(${realIdx})">Borrar</button></div></td></tr>`;
+      ? (r.fechaRespANI ? (r.fechaRespANI<=r.fechaLimite?'<span style="color:var(--green);font-size:10px;font-weight:600;font-family:var(--mono)">A tiempo</span>':'<span style="color:var(--red);font-size:10px;font-weight:600;font-family:var(--mono)">Tardio</span>') : cumpl)
+      : (r.fechaRespANI2 ? (r.fechaRespANI2<=r.fechaLimite?'<span style="color:var(--green);font-size:10px;font-weight:600;font-family:var(--mono)">A tiempo</span>':'<span style="color:var(--red);font-size:10px;font-weight:600;font-family:var(--mono)">Tardio</span>') : cumpl);
+    return`<tr><td style="color:var(--text3);font-family:var(--mono)">${i+1}</td><td><span class="oficio-code">${r.radicadoANI||'-'}</span></td><td><div style="font-family:var(--mono);font-size:11px;background:var(--surface2);padding:2px 6px;border-radius:3px;white-space:nowrap">${r.radicadoInterno||'-'}</div>${r.fechaRadInterno?`<div style="font-size:10px;color:var(--text3)">${fmtDate(r.fechaRadInterno)}</div>`:''}</td><td style="font-size:11px;white-space:nowrap">${fmtDate(r.fechaRecepcion)}</td><td style="max-width:180px;font-size:11px;line-height:1.4">${(r.asunto||'-').slice(0,90)}${(r.asunto||'').length>90?'':''}</td><td>${oficioCell}</td><td style="white-space:nowrap;font-size:11px">${fechaCell}</td><td><span style="font-family:var(--mono);font-size:11px;background:var(--surface2);padding:2px 6px;border-radius:3px">${r.plazo||15}d</span></td><td style="white-space:nowrap;font-size:11px">${fmtDate(r.fechaLimite)}</td><td style="text-align:center">${diasHtml}</td><td><span class="badge ${st.cls}">${st.label}</span></td><td style="font-size:11px">${respCell}</td>${colsT1}<td>${cumplFinal}</td><td><div style="display:flex;gap:4px;flex-wrap:wrap">${btnResp}<button class="btn sm" onclick="editarReg(${realIdx})">Editar</button><button class="btn sm danger" onclick="eliminar(${realIdx})">Borrar</button></div></td></tr>`;
   }).join('');
 }
 
-// ── UPLOAD ────────────────────────────────────────────────────────────────────
+
 function openUpload(){
   document.getElementById('modal-upload').classList.add('open');
   showStep1();
@@ -469,12 +469,12 @@ function openUpload(){
 function showStep1(){
   const t=currentTab;
   document.getElementById('modal-upload-inner').innerHTML=`
-    <div class="modal-header"><h3>${t===1?'Cargar PDF — Enviado al Concesionario':'Cargar PDF — Recibido de la ANI'}</h3><button class="modal-close" onclick="closeModal('modal-upload')">×</button></div>
+    <div class="modal-header"><h3>${t===1?'Cargar PDF - Enviado al Concesionario':'Cargar PDF - Recibido de la ANI'}</h3><button class="modal-close" onclick="closeModal('modal-upload')">x</button></div>
     <div class="upload-zone" id="dropzone">
       <input type="file" accept=".pdf" onchange="handleFile(this.files[0])">
-      <div class="uz-icon">📄</div>
-      <strong>Arrastra el PDF aquí o haz clic para seleccionarlo</strong>
-      <p>La IA extraerá automáticamente los datos del comunicado</p>
+      <div class="uz-icon"></div>
+      <strong>Arrastra el PDF aqui o haz clic para seleccionarlo</strong>
+      <p>La IA extraera automaticamente los datos del comunicado</p>
     </div>
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
       <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -491,7 +491,7 @@ function showStep1(){
 
 async function handleFile(file){
   if(!file)return;
-  document.getElementById('modal-upload-inner').innerHTML=`<div class="modal-header"><h3>Procesando PDF</h3></div><div class="loading-box"><div class="spinner"></div><p>La IA está identificando el tipo de documento...</p><span class="fname">${file.name}</span></div>`;
+  document.getElementById('modal-upload-inner').innerHTML=`<div class="modal-header"><h3>Procesando PDF</h3></div><div class="loading-box"><div class="spinner"></div><p>La IA esta identificando el tipo de documento...</p><span class="fname">${file.name}</span></div>`;
   try{
     const base64=await fileToBase64(file);
     const key=getApiKey();
@@ -505,12 +505,12 @@ async function handleFile(file){
       showManual(data,file.name,'');
     }
   }catch(e){
-    document.getElementById('modal-upload-inner').innerHTML=`<div class="modal-header"><h3>Error</h3><button class="modal-close" onclick="closeModal('modal-upload')">×</button></div><div style="padding:1rem"><div style="background:var(--red-bg);border-left:3px solid var(--red);padding:12px;border-radius:0 4px 4px 0;font-size:13px;color:var(--red);margin-bottom:1rem">${e.message}</div><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" onclick="showStep1()">Reintentar</button><button class="btn primary" onclick="showManual(null,'','')">Ingresar manualmente</button></div></div>`;
+    document.getElementById('modal-upload-inner').innerHTML=`<div class="modal-header"><h3>Error</h3><button class="modal-close" onclick="closeModal('modal-upload')">x</button></div><div style="padding:1rem"><div style="background:var(--red-bg);border-left:3px solid var(--red);padding:12px;border-radius:0 4px 4px 0;font-size:13px;color:var(--red);margin-bottom:1rem">${e.message}</div><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" onclick="showStep1()">Reintentar</button><button class="btn primary" onclick="showManual(null,'','')">Ingresar manualmente</button></div></div>`;
   }
 }
 
 async function detectTipoDoc(base64,apiKey){
-  const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:50,messages:[{role:'user',content:[{type:'document',source:{type:'base64',media_type:'application/pdf',data:base64}},{type:'text',text:'Clasifica este documento en UNA de estas categorías y responde SOLO con esa palabra: "traslado_interventoria" (comunicado de la interventoría al concesionario), "requerimiento_ani" (oficio de la ANI a la interventoría), "respuesta_concesionario" (respuesta del concesionario a cualquier entidad). Responde solo la categoría, sin más texto.'}]}]})});
+  const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:50,messages:[{role:'user',content:[{type:'document',source:{type:'base64',media_type:'application/pdf',data:base64}},{type:'text',text:'Clasifica este documento en UNA de estas categorias y responde SOLO con esa palabra: "traslado_interventoria" (comunicado de la interventoria al concesionario), "requerimiento_ani" (oficio de la ANI a la interventoria), "respuesta_concesionario" (respuesta del concesionario a cualquier entidad). Responde solo la categoria, sin mas texto.'}]}]})});
   if(!resp.ok)throw new Error(`Error API ${resp.status}`);
   const data=await resp.json();
   return data.content.map(c=>c.text||'').join('').trim().toLowerCase().replace(/[^a-z_]/g,'');
@@ -518,12 +518,12 @@ async function detectTipoDoc(base64,apiKey){
 
 function showUploadRespConc(){
   document.getElementById('modal-upload-inner').innerHTML=`
-    <div class="modal-header"><h3>Cargar respuesta del Concesionario</h3><button class="modal-close" onclick="closeModal('modal-upload')">×</button></div>
+    <div class="modal-header"><h3>Cargar respuesta del Concesionario</h3><button class="modal-close" onclick="closeModal('modal-upload')">x</button></div>
     <div class="upload-zone" id="dropzone2">
       <input type="file" accept=".pdf" onchange="handleFileRespConc(this.files[0])">
-      <div class="uz-icon">📄</div>
+      <div class="uz-icon"></div>
       <strong>Arrastra el PDF de respuesta del Concesionario</strong>
-      <p>La IA detectará automáticamente los registros relacionados y los actualizará</p>
+      <p>La IA detectara automaticamente los registros relacionados y los actualizara</p>
     </div>
     <div style="display:flex;justify-content:flex-end"><button class="btn" onclick="closeModal('modal-upload')">Cancelar</button></div>`;
   const dz=document.getElementById('dropzone2');
@@ -534,20 +534,20 @@ function showUploadRespConc(){
 
 async function handleFileRespConc(file){
   if(!file)return;
-  document.getElementById('modal-upload-inner').innerHTML=`<div class="modal-header"><h3>Procesando respuesta</h3></div><div class="loading-box"><div class="spinner"></div><p>La IA está leyendo la respuesta del Concesionario...</p><span class="fname">${file.name}</span></div>`;
+  document.getElementById('modal-upload-inner').innerHTML=`<div class="modal-header"><h3>Procesando respuesta</h3></div><div class="loading-box"><div class="spinner"></div><p>La IA esta leyendo la respuesta del Concesionario...</p><span class="fname">${file.name}</span></div>`;
   try{
     const base64=await fileToBase64(file);
     const key=getApiKey();
     if(!key)throw new Error('No hay API Key configurada.');
     await procesarRespConc(base64,file.name,key);
   }catch(e){
-    document.getElementById('modal-upload-inner').innerHTML=`<div class="modal-header"><h3>Error</h3><button class="modal-close" onclick="closeModal('modal-upload')">×</button></div><div style="padding:1rem"><div style="background:var(--red-bg);border-left:3px solid var(--red);padding:12px;border-radius:0 4px 4px 0;font-size:13px;color:var(--red);margin-bottom:1rem">${e.message}</div><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" onclick="showUploadRespConc()">Reintentar</button></div></div>`;
+    document.getElementById('modal-upload-inner').innerHTML=`<div class="modal-header"><h3>Error</h3><button class="modal-close" onclick="closeModal('modal-upload')">x</button></div><div style="padding:1rem"><div style="background:var(--red-bg);border-left:3px solid var(--red);padding:12px;border-radius:0 4px 4px 0;font-size:13px;color:var(--red);margin-bottom:1rem">${e.message}</div><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" onclick="showUploadRespConc()">Reintentar</button></div></div>`;
   }
 }
 
 async function procesarRespConc(base64,filename,apiKey){
   document.getElementById('modal-upload-inner').innerHTML=`<div class="modal-header"><h3>Procesando respuesta</h3></div><div class="loading-box"><div class="spinner"></div><p>Extrayendo datos de la respuesta...</p><span class="fname">${filename}</span></div>`;
-  const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:500,messages:[{role:'user',content:[{type:'document',source:{type:'base64',media_type:'application/pdf',data:base64}},{type:'text',text:'Este es un documento de respuesta del Concesionario. Extrae los datos y responde SOLO con JSON válido sin backticks:
+  const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:500,messages:[{role:'user',content:[{type:'document',source:{type:'base64',media_type:'application/pdf',data:base64}},{type:'text',text:'Este es un documento de respuesta del Concesionario. Extrae los datos y responde SOLO con JSON valido sin backticks:
 {"fechaRespuesta":"YYYY-MM-DD","oficioRespuesta":"numero oficio del concesionario","radicadosANI":["lista de radicados ANI mencionados"],"radicadoInterno":"numero interno interventoria si aparece en sello","fechaRadInterno":"YYYY-MM-DD fecha sello recibido","observaciones":"resumen breve max 150 chars"}
 Usa null si no existe.'}]}]})});
   if(!resp.ok)throw new Error(`Error API ${resp.status}`);
@@ -559,23 +559,23 @@ Usa null si no existe.'}]}]})});
   const relacionados1=records1.filter(r=>radicados.includes(r.radicadoANI)&&!r.fechaRespuesta);
   const relacionados2=records2.filter(r=>radicados.includes(r.radicadoANI)&&!r.fechaRespuestaInterv);
   // Show confirmation
-  const lista1=relacionados1.map(r=>`• Pestaña 1: ${r.oficioInterventoria||r.radicadoANI} — ${(r.asunto||'').slice(0,50)}`).join('\n');
-  const lista2=relacionados2.map(r=>`• Pestaña 2: Interno ${r.radicadoInterno||r.radicadoANI} — ${(r.asunto||'').slice(0,50)}`).join('\n');
+  const lista1=relacionados1.map(r=>` Pestana 1: ${r.oficioInterventoria||r.radicadoANI} - ${(r.asunto||'').slice(0,50)}`).join('\n');
+  const lista2=relacionados2.map(r=>` Pestana 2: Interno ${r.radicadoInterno||r.radicadoANI} - ${(r.asunto||'').slice(0,50)}`).join('\n');
   const totalRel=relacionados1.length+relacionados2.length;
   if(totalRel===0){
-    document.getElementById('modal-upload-inner').innerHTML=`<div class="modal-header"><h3>Sin registros relacionados</h3><button class="modal-close" onclick="closeModal('modal-upload')">×</button></div><div style="padding:1rem"><div style="background:var(--amber-bg);border-left:3px solid #e08c00;padding:12px;border-radius:0 4px 4px 0;font-size:13px;color:var(--amber);margin-bottom:1rem">No se encontraron registros pendientes con los radicados ANI de este documento: ${radicados.join(', ')||'ninguno detectado'}</div><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" onclick="closeModal('modal-upload')">Cerrar</button></div></div>`;
+    document.getElementById('modal-upload-inner').innerHTML=`<div class="modal-header"><h3>Sin registros relacionados</h3><button class="modal-close" onclick="closeModal('modal-upload')">x</button></div><div style="padding:1rem"><div style="background:var(--amber-bg);border-left:3px solid #e08c00;padding:12px;border-radius:0 4px 4px 0;font-size:13px;color:var(--amber);margin-bottom:1rem">No se encontraron registros pendientes con los radicados ANI de este documento: ${radicados.join(', ')||'ninguno detectado'}</div><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" onclick="closeModal('modal-upload')">Cerrar</button></div></div>`;
     return;
   }
   document.getElementById('modal-upload-inner').innerHTML=`
-    <div class="modal-header"><h3>Confirmar registro automático</h3><button class="modal-close" onclick="closeModal('modal-upload')">×</button></div>
-    <div class="ai-note"><strong>IA — respuesta detectada</strong>Oficio: ${d.oficioRespuesta||'—'} · Fecha: ${fmtDate(d.fechaRespuesta)} · Radicados: ${radicados.join(', ')}</div>
+    <div class="modal-header"><h3>Confirmar registro automatico</h3><button class="modal-close" onclick="closeModal('modal-upload')">x</button></div>
+    <div class="ai-note"><strong>IA - respuesta detectada</strong>Oficio: ${d.oficioRespuesta||'-'} · Fecha: ${fmtDate(d.fechaRespuesta)} · Radicados: ${radicados.join(', ')}</div>
     <div style="background:var(--green-bg);border-left:3px solid var(--green);padding:12px;border-radius:0 4px 4px 0;font-size:12px;color:var(--green);margin-bottom:1rem">
-      <strong style="display:block;margin-bottom:6px">Se actualizarán ${totalRel} registro(s):</strong>
+      <strong style="display:block;margin-bottom:6px">Se actualizaran ${totalRel} registro(s):</strong>
       ${lista1?lista1.replace(/\n/g,'<br>'):''}${lista2?'<br>'+lista2.replace(/\n/g,'<br>'):''}
     </div>
     <div class="modal-footer">
       <button class="btn" onclick="closeModal('modal-upload')">Cancelar</button>
-      <button class="btn success" onclick="confirmarRespConc(${JSON.stringify(d).replace(/'/g,"\'")},'${filename}')">Registrar automáticamente</button>
+      <button class="btn success" onclick="confirmarRespConc(${JSON.stringify(d).replace(/'/g,"\'")},'${filename}')">Registrar automaticamente</button>
     </div>`;
 }
 
@@ -599,7 +599,7 @@ function confirmarRespConc(d,filename){
     }
   });
   save();closeModal('modal-upload');render();
-  alert(`✅ ${count} registro(s) actualizado(s) automáticamente con la respuesta del Concesionario.`);
+  alert(` ${count} registro(s) actualizado(s) automaticamente con la respuesta del Concesionario.`);
 }
 
 function fileToBase64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=()=>rej(new Error('No se pudo leer el archivo'));r.readAsDataURL(file)})}
@@ -607,10 +607,10 @@ function fileToBase64(file){return new Promise((res,rej)=>{const r=new FileReade
 async function extractWithAI(base64,filename,apiKey){
   const t=currentTab;
   const prompt = t===1
-    ? `Extrae datos de este comunicado de interventoría enviado al concesionario. Responde SOLO JSON válido sin backticks:
+    ? `Extrae datos de este comunicado de interventoria enviado al concesionario. Responde SOLO JSON valido sin backticks:
 {"radicadoANI":"numero radicado ANI","fechaRecepcionANI":"YYYY-MM-DD fecha del radicado ANI","asunto":"descripcion corta max 120 chars","oficioInterventoria":"numero oficio interventoria","fechaTraslado":"YYYY-MM-DD fecha del comunicado","plazo":dias_habiles_entero,"observaciones":"notas max 200 chars"}
 Usa null si no existe.`
-    : `Extrae datos de este comunicado/requerimiento recibido de la ANI. Responde SOLO JSON válido sin backticks:
+    : `Extrae datos de este comunicado/requerimiento recibido de la ANI. Responde SOLO JSON valido sin backticks:
 {"radicadoANI":"numero radicado ANI","fechaRecepcion":"YYYY-MM-DD fecha recepcion del comunicado","asunto":"descripcion corta max 120 chars","oficioANI":"numero oficio de la ANI","plazo":dias_habiles_entero_para_responder,"observaciones":"notas max 200 chars"}
 Usa null si no existe.`;
   const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:[{type:'document',source:{type:'base64',media_type:'application/pdf',data:base64}},{type:'text',text:prompt}]}]})});
@@ -627,29 +627,29 @@ function showManual(data,filename,editIdx){
   const ft=t===1?(d.fechaTraslado||''):(d.fechaRecepcion||'');
   const lim=ft&&d.plazo?calcLimite(ft,d.plazo):'';
   document.getElementById('modal-upload-inner').innerHTML=`
-    <div class="modal-header"><h3>${isEdit?'Editar registro':'Confirmar datos extraídos'}</h3><button class="modal-close" onclick="closeModal('modal-upload')">×</button></div>
-    ${data?`<div class="ai-note ${t===2?'t2':''}"><strong>IA — datos extraídos</strong>Revise y corrija si es necesario. Archivo: ${filename}</div>`:''}
+    <div class="modal-header"><h3>${isEdit?'Editar registro':'Confirmar datos extraidos'}</h3><button class="modal-close" onclick="closeModal('modal-upload')">x</button></div>
+    ${data?`<div class="ai-note ${t===2?'t2':''}"><strong>IA - datos extraidos</strong>Revise y corrija si es necesario. Archivo: ${filename}</div>`:''}
     <div class="grid2">
       <div class="field"><label>Radicado ANI</label><input id="f-radicado" value="${d.radicadoANI||''}"></div>
-      <div class="field"><label>Radicado Interno Interventoría</label><input id="f-radinterno" value="${d.radicadoInterno||''}" placeholder="Ej. 4043"></div></div><div class="grid2"><div class="field"><label>Fecha radicado interno</label><input type="date" id="f-radfecha" value="${d.fechaRadInterno||''}"></div>
+      <div class="field"><label>Radicado Interno Interventoria</label><input id="f-radinterno" value="${d.radicadoInterno||''}" placeholder="Ej. 4043"></div></div><div class="grid2"><div class="field"><label>Fecha radicado interno</label><input type="date" id="f-radfecha" value="${d.fechaRadInterno||''}"></div>
     </div>
     <div class="grid2">
-      <div class="field"><label>${t===1?'Oficio Interventoría':'Oficio ANI'}</label><input id="f-oficio" value="${t===1?(d.oficioInterventoria||''):(d.oficioANI||'')}"></div>
-      <div class="field"><label>Fecha recepción comunicado ANI</label><input type="date" id="f-fecRec" value="${d.fechaRecepcionANI||d.fechaRecepcion||''}"></div>
+      <div class="field"><label>${t===1?'Oficio Interventoria':'Oficio ANI'}</label><input id="f-oficio" value="${t===1?(d.oficioInterventoria||''):(d.oficioANI||'')}"></div>
+      <div class="field"><label>Fecha recepcion comunicado ANI</label><input type="date" id="f-fecRec" value="${d.fechaRecepcionANI||d.fechaRecepcion||''}"></div>
     </div>
     <div class="field">
-      <label>${t===1?'Fecha traslado al concesionario':'Fecha límite (desde recepción)'}</label>
+      <label>${t===1?'Fecha traslado al concesionario':'Fecha limite (desde recepcion)'}</label>
       <input type="date" id="f-fecTra" value="${ft}" oninput="calcLimiteForm()">
     </div>
     <div class="field"><label>Asunto</label><input id="f-asunto" value="${d.asunto||''}"></div>
     <div class="grid2">
-      <div class="field"><label>Plazo (días hábiles)</label><input type="number" id="f-plazo" value="${d.plazo||15}" min="1" oninput="calcLimiteForm()"></div>
-      <div class="field"><label>Fecha límite (automática)</label><input type="date" id="f-limite" value="${lim}" readonly></div>
+      <div class="field"><label>Plazo (dias habiles)</label><input type="number" id="f-plazo" value="${d.plazo||15}" min="1" oninput="calcLimiteForm()"></div>
+      <div class="field"><label>Fecha limite (automatica)</label><input type="date" id="f-limite" value="${lim}" readonly></div>
     </div>
     <div class="field"><label>Nombre archivo PDF</label><input id="f-pdf" value="${filename||''}"></div>
     <div class="field"><label>Observaciones</label><textarea id="f-obs">${d.observaciones||''}</textarea></div>
     <div class="modal-footer">
-      ${!isEdit?`<button class="btn" onclick="showStep1()">← Volver</button>`:''}
+      ${!isEdit?`<button class="btn" onclick="showStep1()"> Volver</button>`:''}
       <button class="btn" onclick="closeModal('modal-upload')">Cancelar</button>
       <button class="btn ${t===1?'primary':'primary2'}" onclick="${isEdit?`guardarEdicion(${editIdx})`:'guardarNuevo()'}">${isEdit?'Guardar cambios':'Guardar registro'}</button>
     </div>`;
@@ -694,13 +694,13 @@ function guardarRespuesta(){
   records1[i].fechaRespuesta=fecha;
   records1[i].oficioRespuesta=oficio;
   if(obs)records1[i].observaciones=(records1[i].observaciones||'')+' | '+obs;
-  // Auto-link: buscar registro relacionado en Pestaña 2 por radicado ANI
+  // Auto-link: buscar registro relacionado en Pestana 2 por radicado ANI
   const radicado=records1[i].radicadoANI;
   if(radicado){
     const idx2=records2.findIndex(r=>r.radicadoANI===radicado&&!r.fechaRespuestaInterv);
     if(idx2>=0){
       const r2=records2[idx2];
-      if(confirm(`Se encontró el registro relacionado en Pestaña 2:\n\nInterno: ${r2.radicadoInterno||'—'} — ${(r2.asunto||'').slice(0,60)}\n\n¿Registrar también la respuesta del Concesionario en ese registro?`)){
+      if(confirm(`Se encontro el registro relacionado en Pestana 2:\n\nInterno: ${r2.radicadoInterno||'-'} - ${(r2.asunto||'').slice(0,60)}\n\n¿Registrar tambien la respuesta del Concesionario en ese registro?`)){
         records2[idx2].fechaRespuestaInterv=fecha;
         records2[idx2].oficioRespuestaInterv=oficio;
         if(obs)records2[idx2].observaciones=(records2[idx2].observaciones||'')+' | Vinculado desde '+records1[i].oficioInterventoria;
@@ -724,12 +724,12 @@ function eliminar(i){if(!confirm('¿Eliminar este registro?'))return;const t=cur
 function closeModal(id){document.getElementById(id).classList.remove('open')}
 
 function limpiarTodo(){
-  if(!confirm('¿Borrar TODOS los registros de esta pestaña?'))return;
+  if(!confirm('¿Borrar TODOS los registros de esta pestana?'))return;
   if(currentTab===1)records1=[];else records2=[];
   save();render();
 }
 
-// ── IMPORT ────────────────────────────────────────────────────────────────────
+
 function triggerImport(){document.getElementById('import-input').value='';document.getElementById('import-input').click()}
 function parseFecha(val){
   if(!val)return'';
@@ -740,7 +740,7 @@ function parseFecha(val){
   return'';
 }
 function importExcel(input){
-  if(!window.XLSX){alert('Librería no cargada');return}
+  if(!window.XLSX){alert('Libreria no cargada');return}
   const file=input.files[0];if(!file)return;
   const reader=new FileReader();
   reader.onload=e=>{
@@ -761,7 +761,7 @@ function importExcel(input){
         const oficio=String(r[5]||'').trim();
         const todas=r.map(x=>String(x||'').toLowerCase()).join(' ');
         if(!radicado&&!oficio)continue;
-        if(todas.includes('ejemplo')||todas.includes('fila amarilla')||todas.includes('bórrela'))continue;
+        if(todas.includes('ejemplo')||todas.includes('fila amarilla')||todas.includes('borrela'))continue;
         const existe=recs.find(x=>(t===1?x.oficioInterventoria:x.oficioANI)===oficio&&oficio!=='');
         if(existe){skipped++;continue}
         const ft=parseFecha(r[6]);const pl=parseInt(r[7])||15;
@@ -769,26 +769,26 @@ function importExcel(input){
         if(t===1){rec.oficioInterventoria=oficio;rec.fechaTraslado=ft}else{rec.oficioANI=oficio;rec.fechaRecepcion=ft}
         recs.push(rec);imported++;
       }
-      save();render();alert(`✅ Importación:
-• ${imported} importado(s)
-• ${skipped} duplicado(s) omitido(s)`);
+      save();render();alert(` Importacion:
+ ${imported} importado(s)
+ ${skipped} duplicado(s) omitido(s)`);
     }catch(err){alert('Error: '+err.message)}
   };
   reader.readAsArrayBuffer(file);
 }
 
-// ── EXPORT ────────────────────────────────────────────────────────────────────
+
 function exportExcel(){
-  if(!window.XLSX){alert('Librería no cargada');return}
+  if(!window.XLSX){alert('Libreria no cargada');return}
   const t=currentTab;const recs=currentRecords();
   const rows=[t===1
-    ?['N°','Radicado ANI','Rad. Interno','Fecha Recepción ANI','Asunto','Oficio Interventoría','Fecha Traslado','Plazo','Fecha Límite','Días Restantes','Estado','Fecha Resp. Concesionario','Oficio Resp. Concesionario','Fecha Resp. a ANI','Oficio Resp. a ANI','Cumplimiento','Archivo PDF','Observaciones']
-    :['N°','Radicado ANI','Fecha Recepción','Asunto','Oficio ANI','Fecha Límite Respuesta','Plazo','Fecha Límite','Días Restantes','Estado','Fecha Nuestra Respuesta','Nuestro Oficio','Cumplimiento','Archivo PDF','Observaciones']];
+    ?['No','Radicado ANI','Rad. Interno','Fecha Recepcion ANI','Asunto','Oficio Interventoria','Fecha Traslado','Plazo','Fecha Limite','Dias Restantes','Estado','Fecha Resp. Concesionario','Oficio Resp. Concesionario','Fecha Resp. a ANI','Oficio Resp. a ANI','Cumplimiento','Archivo PDF','Observaciones']
+    :['No','Radicado ANI','Fecha Recepcion','Asunto','Oficio ANI','Fecha Limite Respuesta','Plazo','Fecha Limite','Dias Restantes','Estado','Fecha Nuestra Respuesta','Nuestro Oficio','Cumplimiento','Archivo PDF','Observaciones']];
   recs.forEach((r,i)=>{
     const st=getStatus(r,t);const dias=getDias(r,t);
     const respField=t===1?'fechaRespuesta':'fechaRespuestaInterv';
     const oficioRespField=t===1?'oficioRespuesta':'oficioRespuestaInterv';
-    const cumpl=r[respField]?(r[respField]<=r.fechaLimite?'A tiempo':'Tardío'):'Pendiente';
+    const cumpl=r[respField]?(r[respField]<=r.fechaLimite?'A tiempo':'Tardio'):'Pendiente';
     const fechaAcc=t===1?r.fechaTraslado:r.fechaRecepcion;
     const oficioAcc=t===1?r.oficioInterventoria:r.oficioANI;
     if(t===1) rows.push([i+1,r.radicadoANI,r.radicadoInterno,r.fechaRecepcion,r.asunto,oficioAcc,fechaAcc,r.plazo,r.fechaLimite,dias??'',st.label,r.fechaRespuesta,r.oficioRespuesta,r.fechaRespANI,r.oficioRespANI,cumpl,r.archivoPDF,r.observaciones]);
@@ -800,7 +800,7 @@ function exportExcel(){
   XLSX.writeFile(wb,`Control_${t===1?'T1_Concesionario':'T2_ANI'}_${todayStr()}.xlsx`);
 }
 
-// ── INIT ──────────────────────────────────────────────────────────────────────
+
 const hoy=fmtDate(todayStr());
 document.getElementById('topbar-date').textContent=hoy;
 document.getElementById('footer-date').textContent=hoy;
