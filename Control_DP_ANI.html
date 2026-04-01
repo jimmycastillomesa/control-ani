@@ -206,7 +206,7 @@ tbody tr:hover td{background:var(--surface2)}
   </div>
   <div class="footer">
     <p>Días restantes y estado se recalculan al abrir. Hoy: <span id="footer-date"></span></p>
-    <p>Datos guardados localmente en este navegador · v2.0</p>
+    <p>Datos guardados localmente en este navegador - v2.0</p>
   </div>
 </div>
 
@@ -568,7 +568,7 @@ Usa null si no existe.'}]}]})});
   }
   document.getElementById('modal-upload-inner').innerHTML=`
     <div class="modal-header"><h3>Confirmar registro automatico</h3><button class="modal-close" onclick="closeModal('modal-upload')">x</button></div>
-    <div class="ai-note"><strong>IA - respuesta detectada</strong>Oficio: ${d.oficioRespuesta||'-'} · Fecha: ${fmtDate(d.fechaRespuesta)} · Radicados: ${radicados.join(', ')}</div>
+    <div class="ai-note"><strong>IA - respuesta detectada</strong>Oficio: ${d.oficioRespuesta||'-'} - Fecha: ${fmtDate(d.fechaRespuesta)} - Radicados: ${radicados.join(', ')}</div>
     <div style="background:var(--green-bg);border-left:3px solid var(--green);padding:12px;border-radius:0 4px 4px 0;font-size:12px;color:var(--green);margin-bottom:1rem">
       <strong style="display:block;margin-bottom:6px">Se actualizaran ${totalRel} registro(s):</strong>
       ${lista1?lista1.replace(/\n/g,'<br>'):''}${lista2?'<br>'+lista2.replace(/\n/g,'<br>'):''}
@@ -700,7 +700,7 @@ function guardarRespuesta(){
     const idx2=records2.findIndex(r=>r.radicadoANI===radicado&&!r.fechaRespuestaInterv);
     if(idx2>=0){
       const r2=records2[idx2];
-      if(confirm(`Se encontro el registro relacionado en Pestana 2:\n\nInterno: ${r2.radicadoInterno||'-'} - ${(r2.asunto||'').slice(0,60)}\n\n¿Registrar tambien la respuesta del Concesionario en ese registro?`)){
+      if(confirm(`Se encontro el registro relacionado en Pestana 2:\n\nInterno: ${r2.radicadoInterno||'-'} - ${(r2.asunto||'').slice(0,60)}\n\nRegistrar tambien la respuesta del Concesionario en ese registro?`)){
         records2[idx2].fechaRespuestaInterv=fecha;
         records2[idx2].oficioRespuestaInterv=oficio;
         if(obs)records2[idx2].observaciones=(records2[idx2].observaciones||'')+' | Vinculado desde '+records1[i].oficioInterventoria;
@@ -720,11 +720,11 @@ function abrirRespANI2(i){editingRespIdx=i;document.getElementById('ra2-fecha').
 function guardarRespANI2_t2(){const i=editingRespIdx;records2[i].fechaRespANI2=document.getElementById('ra2-fecha').value;records2[i].oficioRespANI2=document.getElementById('ra2-oficio').value.trim();const obs=document.getElementById('ra2-obs').value.trim();if(obs)records2[i].observaciones=(records2[i].observaciones||'')+' | Resp ANI: '+obs;save();closeModal('modal-resp-ani2');render()}
 
 function editarReg(i){document.getElementById('modal-upload').classList.add('open');const t=currentTab;const r=t===1?records1[i]:records2[i];showManual(t===1?{...r,fechaRecepcionANI:r.fechaRecepcion,oficioInterventoria:r.oficioInterventoria,fechaTraslado:r.fechaTraslado}:{...r},r.archivoPDF||'',i)}
-function eliminar(i){if(!confirm('¿Eliminar este registro?'))return;const t=currentTab;if(t===1)records1.splice(i,1);else records2.splice(i,1);save();render()}
+function eliminar(i){if(!confirm('Eliminar este registro?'))return;const t=currentTab;if(t===1)records1.splice(i,1);else records2.splice(i,1);save();render()}
 function closeModal(id){document.getElementById(id).classList.remove('open')}
 
 function limpiarTodo(){
-  if(!confirm('¿Borrar TODOS los registros de esta pestana?'))return;
+  if(!confirm('Borrar TODOS los registros de esta pestana?'))return;
   if(currentTab===1)records1=[];else records2=[];
   save();render();
 }
